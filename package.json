@@ -20,7 +20,7 @@
     "generate": "yarn workspace @token-wrapper/hardhat generate",
     "hardhat:lint": "yarn workspace @token-wrapper/hardhat lint",
     "hardhat:lint-staged": "yarn workspace @token-wrapper/hardhat lint-staged",
-    "hardhat:test": "yarn workspace @token-wrapper/hardhat test",
+    "test": "yarn workspace @token-wrapper/hardhat test",
     "start": "yarn workspace @token-wrapper/nextjs dev",
     "next:lint": "yarn workspace @token-wrapper/nextjs lint",
     "next:format": "yarn workspace @token-wrapper/nextjs format",
