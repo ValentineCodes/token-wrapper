@@ -9,7 +9,7 @@ describe("ClonedETH", function () {
 
   let valentine: SignerWithAddress;
 
-  let ClonedETH: ClonedETH;
+  let cETH: ClonedETH;
   before(async () => {
     const signers: SignerWithAddress[] = await ethers.getSigners();
 
@@ -17,97 +17,94 @@ describe("ClonedETH", function () {
 
     await deployments.fixture(["ClonedETH"]);
 
-    ClonedETH = await ethers.getContract("ClonedETH", valentine);
+    cETH = await ethers.getContract("ClonedETH", valentine);
   });
 
   describe("deposit", () => {
     it("mints deposited amount to depositor and emits an event", async () => {
       const oldETHBal = await valentine.getBalance();
-      const oldClonedETHBal = await ClonedETH.balanceOf(valentine.address);
+      const oldcETHBal = await cETH.balanceOf(valentine.address);
 
       console.log(`old ETH balance: ${ethers.utils.formatEther(oldETHBal)} ETH`);
-      console.log(`old ClonedETH balance: ${ethers.utils.formatEther(oldClonedETHBal)} ClonedETH`);
+      console.log(`old cETH balance: ${ethers.utils.formatEther(oldcETHBal)} cETH`);
       console.log("-----");
 
       console.log("depositing 0.5 ETH...");
-      await expect(ClonedETH.deposit({ value: depositAmount }))
-        .to.emit(ClonedETH, "ETHDeposited")
+      await expect(cETH.deposit({ value: depositAmount }))
+        .to.emit(cETH, "ETHDeposited")
         .withArgs(valentine.address, depositAmount);
       console.log("deposit successful✅");
       console.log("-----");
 
       const newETHBal = await valentine.getBalance();
-      const newClonedETHBal = await ClonedETH.balanceOf(valentine.address);
+      const newcETHBal = await cETH.balanceOf(valentine.address);
 
       console.log(`new ETH balance: ${ethers.utils.formatEther(newETHBal)} ETH`);
-      console.log(`new ClonedETH balance: ${ethers.utils.formatEther(newClonedETHBal)} ClonedETH`);
+      console.log(`new cETH balance: ${ethers.utils.formatEther(newcETHBal)} cETH`);
 
       expect(newETHBal).to.be.lessThan(oldETHBal);
-      expect(newClonedETHBal).to.eq(oldClonedETHBal.add(depositAmount));
+      expect(newcETHBal).to.eq(oldcETHBal.add(depositAmount));
     });
     it("reverts if amount is ZERO", async () => {
-      await expect(ClonedETH.deposit({ value: 0 })).to.be.revertedWithCustomError(
-        ClonedETH,
-        "ClonedETH__InvalidAmount",
-      );
+      await expect(cETH.deposit({ value: 0 })).to.be.revertedWithCustomError(cETH, "ClonedETH__InvalidAmount");
     });
   });
 
   describe("withdraw", () => {
     it("withdraws amount to owner and emits an event", async () => {
       const oldETHBal = await valentine.getBalance();
-      const oldClonedETHBal = await ClonedETH.balanceOf(valentine.address);
+      const oldcETHBal = await cETH.balanceOf(valentine.address);
 
       console.log(`old ETH balance: ${ethers.utils.formatEther(oldETHBal)} ETH`);
-      console.log(`old ClonedETH balance: ${ethers.utils.formatEther(oldClonedETHBal)} ClonedETH`);
+      console.log(`old cETH balance: ${ethers.utils.formatEther(oldcETHBal)} cETH`);
       console.log("-----");
 
-      console.log("withdrawing 0.2 ClonedETH...");
-      await expect(ClonedETH.withdraw(withdrawAmount))
-        .to.emit(ClonedETH, "ETHWithdrawn")
+      console.log("withdrawing 0.2 cETH...");
+      await expect(cETH.withdraw(withdrawAmount))
+        .to.emit(cETH, "ETHWithdrawn")
         .withArgs(valentine.address, withdrawAmount);
       console.log("withdrawal successful✅");
       console.log("-----");
 
       const newETHBal = await valentine.getBalance();
-      const newClonedETHBal = await ClonedETH.balanceOf(valentine.address);
+      const newcETHBal = await cETH.balanceOf(valentine.address);
 
       console.log(`new ETH balance: ${ethers.utils.formatEther(newETHBal)} ETH`);
-      console.log(`new ClonedETH balance: ${ethers.utils.formatEther(newClonedETHBal)} ClonedETH`);
+      console.log(`new cETH balance: ${ethers.utils.formatEther(newcETHBal)} cETH`);
 
       expect(newETHBal).to.be.greaterThan(oldETHBal);
-      expect(newClonedETHBal).to.eq(oldClonedETHBal.sub(withdrawAmount));
+      expect(newcETHBal).to.eq(oldcETHBal.sub(withdrawAmount));
     });
     it("reverts if balance is insufficient", async () => {
-      await expect(ClonedETH.withdraw(ethers.utils.parseEther("0.55"))).to.reverted;
+      await expect(cETH.withdraw(ethers.utils.parseEther("0.55"))).to.reverted;
     });
   });
 
   describe("receive", () => {
-    it("mints ClonedETH for every amount transferred to ClonedETH contract", async () => {
+    it("mints cETH for every amount transferred to cETH contract", async () => {
       const oldETHBal = await valentine.getBalance();
-      const oldClonedETHBal = await ClonedETH.balanceOf(valentine.address);
+      const oldcETHBal = await cETH.balanceOf(valentine.address);
 
       console.log(`old ETH balance: ${ethers.utils.formatEther(oldETHBal)} ETH`);
-      console.log(`old ClonedETH balance: ${ethers.utils.formatEther(oldClonedETHBal)} ClonedETH`);
+      console.log(`old cETH balance: ${ethers.utils.formatEther(oldcETHBal)} cETH`);
       console.log("-----");
 
       console.log("transferring 0.5 ETH to iETH...");
       await valentine.sendTransaction({
-        to: ClonedETH.address,
+        to: cETH.address,
         value: depositAmount,
       });
       console.log("transfer successful✅");
       console.log("-----");
 
       const newETHBal = await valentine.getBalance();
-      const newClonedETHBal = await ClonedETH.balanceOf(valentine.address);
+      const newcETHBal = await cETH.balanceOf(valentine.address);
 
       console.log(`new ETH balance: ${ethers.utils.formatEther(newETHBal)} ETH`);
-      console.log(`new ClonedETH balance: ${ethers.utils.formatEther(newClonedETHBal)} ClonedETH`);
+      console.log(`new cETH balance: ${ethers.utils.formatEther(newcETHBal)} cETH`);
 
       expect(newETHBal).to.be.lessThan(oldETHBal);
-      expect(newClonedETHBal).to.eq(oldClonedETHBal.add(depositAmount));
+      expect(newcETHBal).to.eq(oldcETHBal.add(depositAmount));
     });
   });
 });
