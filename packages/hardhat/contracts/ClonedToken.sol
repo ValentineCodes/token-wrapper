@@ -5,7 +5,6 @@ import {ERC20, IERC20, IERC20Metadata} from "@openzeppelin/contracts/token/ERC20
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IClonedToken} from "./interfaces/IClonedToken.sol";
-import {console} from "hardhat/console.sol";
 
 contract ClonedToken is IClonedToken, ERC20, Ownable {
   IERC20 public immutable underlying;
