@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-interface IClonedTokenGenerator {
+interface ITokenCloner {
   /**
    * @notice Emitted when a cloned token is generated
    * @param cToken Address of cloned token

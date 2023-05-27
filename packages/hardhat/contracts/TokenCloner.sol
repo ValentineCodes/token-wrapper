@@ -4,17 +4,17 @@ pragma solidity ^0.8.18;
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import {ClonedToken} from "./ClonedToken.sol";
-import {IClonedTokenGenerator} from "./interfaces/IClonedTokenGenerator.sol";
+import {TokenClone} from "./TokenClone.sol";
+import {ITokenCloner} from "./interfaces/ITokenCloner.sol";
 
-error ClonedTokenGenerator__TokenExists();
-error ClonedTokenGenerator__NameExists();
-error ClonedTokenGenerator__SymbolExists();
-error ClonedTokenGenerator__ZeroAddress();
-error ClonedTokenGenerator__EmptyName();
-error ClonedTokenGenerator__EmptySymbol();
+error TokenCloner__TokenExists();
+error TokenCloner__NameExists();
+error TokenCloner__SymbolExists();
+error TokenCloner__ZeroAddress();
+error TokenCloner__EmptyName();
+error TokenCloner__EmptySymbol();
 
-contract ClonedTokenGenerator is IClonedTokenGenerator, Ownable {
+contract TokenCloner is ITokenCloner, Ownable {
   address[] public s_cTokens;
 
   mapping(address underlyingToken => bool) private s_hasToken;
@@ -22,14 +22,14 @@ contract ClonedTokenGenerator is IClonedTokenGenerator, Ownable {
   mapping(string symbol => bool) private s_hasSymbol;
 
   function createClone(address underlyingToken, string calldata name, string calldata symbol) public onlyOwner {
-    if (bytes(name).length == 0) revert ClonedTokenGenerator__EmptyName();
-    if (bytes(symbol).length == 0) revert ClonedTokenGenerator__EmptySymbol();
+    if (bytes(name).length == 0) revert TokenCloner__EmptyName();
+    if (bytes(symbol).length == 0) revert TokenCloner__EmptySymbol();
 
-    if (s_hasToken[underlyingToken]) revert ClonedTokenGenerator__TokenExists();
-    if (s_hasName[name]) revert ClonedTokenGenerator__NameExists();
-    if (s_hasName[symbol]) revert ClonedTokenGenerator__SymbolExists();
+    if (s_hasToken[underlyingToken]) revert TokenCloner__TokenExists();
+    if (s_hasName[name]) revert TokenCloner__NameExists();
+    if (s_hasName[symbol]) revert TokenCloner__SymbolExists();
 
-    ClonedToken cToken = new ClonedToken(IERC20(underlyingToken), name, symbol);
+    TokenClone cToken = new TokenClone(IERC20(underlyingToken), name, symbol);
 
     address cTokenAddress = address(cToken);
 

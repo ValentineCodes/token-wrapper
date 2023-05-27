@@ -4,9 +4,9 @@ pragma solidity ^0.8.18;
 import {ERC20, IERC20, IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {IClonedToken} from "./interfaces/IClonedToken.sol";
+import {ITokenClone} from "./interfaces/ITokenClone.sol";
 
-contract ClonedToken is IClonedToken, ERC20, Ownable {
+contract TokenClone is ITokenClone, ERC20, Ownable {
   IERC20 public immutable underlying;
 
   constructor(IERC20 underlyingToken, string memory name, string memory symbol) ERC20(name, symbol) {

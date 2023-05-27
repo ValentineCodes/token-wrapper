@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-interface IClonedToken {
+interface ITokenClone {
   /**
    *
    * @notice Emitted when an amount deposited by mistake is recovered
@@ -13,7 +13,7 @@ interface IClonedToken {
   /**
    *
    * @notice Allows a user to deposit underlying tokens and mint the corresponding number of cloned tokens.
-   * @dev ClonedToken must be approved to spend {amount}
+   * @dev TokenClone must be approved to spend {amount}
    * @param amount Amount to be deposited
    * @return `true` if deposit is successful and `false` otherwise
    */
