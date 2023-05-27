@@ -18,6 +18,7 @@
     "verify": "yarn workspace @token-wrapper/hardhat verify",
     "compile": "yarn workspace @token-wrapper/hardhat compile",
     "clean": "yarn workspace @token-wrapper/hardhat clean",
+    "bridgeTokens": "yarn workspace @token-wrapper/hardhat bridgeTokens",
     "generate": "yarn workspace @token-wrapper/hardhat generate",
     "hardhat:lint": "yarn workspace @token-wrapper/hardhat lint",
     "hardhat:lint-staged": "yarn workspace @token-wrapper/hardhat lint-staged",
