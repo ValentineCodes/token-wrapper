@@ -15,7 +15,7 @@ error TokenCloner__EmptyName();
 error TokenCloner__EmptySymbol();
 
 contract TokenCloner is ITokenCloner, Ownable {
-  address[] public s_cTokens;
+  address[] private s_cTokens;
 
   mapping(address underlyingToken => bool) private s_hasToken;
   mapping(string name => bool) private s_hasName;
@@ -27,7 +27,7 @@ contract TokenCloner is ITokenCloner, Ownable {
 
     if (s_hasToken[underlyingToken]) revert TokenCloner__TokenExists();
     if (s_hasName[name]) revert TokenCloner__NameExists();
-    if (s_hasName[symbol]) revert TokenCloner__SymbolExists();
+    if (s_hasSymbol[symbol]) revert TokenCloner__SymbolExists();
 
     TokenClone cToken = new TokenClone(IERC20(underlyingToken), name, symbol);
 
@@ -39,6 +39,10 @@ contract TokenCloner is ITokenCloner, Ownable {
     s_hasSymbol[symbol] = true;
 
     emit CloneCreated(cTokenAddress);
+  }
+
+  function getTokenClones() public view returns (address[] memory) {
+    return s_cTokens;
   }
 
   function hasToken(address underlyingToken) public view returns (bool) {
