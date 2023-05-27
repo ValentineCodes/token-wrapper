@@ -6,15 +6,8 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 error NotOwner();
 
-contract AfterLife is ERC20, Ownable {
+contract AfterLife is ERC20 {
   constructor() ERC20("AfterLife", "AL") {
     _mint(msg.sender, 1000000000000000 * 10 ** 18);
   }
-
-  /**
-   * Changes the owner of the contract.
-   * @notice Can only be called by the current contract owner
-   */
-
-  function _beforeTokenTransfer(address from, address to, uint256 amount) internal view override onlyOwner {}
 }

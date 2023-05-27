@@ -4,8 +4,10 @@ pragma solidity ^0.8.18;
 import {ERC20, IERC20, IERC20Metadata} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {IClonedToken} from "./interfaces/IClonedToken.sol";
+import {console} from "hardhat/console.sol";
 
-contract ClonedToken is ERC20, Ownable {
+contract ClonedToken is IClonedToken, ERC20, Ownable {
   IERC20 public immutable underlying;
 
   constructor(IERC20 underlyingToken, string memory name, string memory symbol) ERC20(name, symbol) {
@@ -23,15 +25,15 @@ contract ClonedToken is ERC20, Ownable {
     }
   }
 
-  function depositFor(address account, uint256 amount) public returns (bool) {
+  function deposit(uint256 amount) public returns (bool) {
     SafeERC20.safeTransferFrom(underlying, _msgSender(), address(this), amount);
-    _mint(account, amount);
+    _mint(_msgSender(), amount);
     return true;
   }
 
-  function withdrawTo(address account, uint256 amount) public returns (bool) {
+  function withdraw(uint256 amount) public returns (bool) {
     _burn(_msgSender(), amount);
-    SafeERC20.safeTransfer(underlying, account, amount);
+    SafeERC20.safeTransfer(underlying, _msgSender(), amount);
     return true;
   }
 
