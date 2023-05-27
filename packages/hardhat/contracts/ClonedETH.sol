@@ -4,21 +4,21 @@ pragma solidity ^0.8.18;
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import {ICETH} from "./interfaces/ICETH.sol";
+import {IClonedETH} from "./interfaces/IClonedETH.sol";
 
-error cETH__TransferFailed();
-error cETH__InvalidAmount();
+error ClonedETH__TransferFailed();
+error ClonedETH__InvalidAmount();
 
 /**
  * @title ETH Wrapper
  * @author Valentine Orga
  * @notice Wraps ETH
  */
-contract cETH is ICETH, ERC20 {
-  constructor() ERC20("Cloned ETH", "cETH") {}
+contract ClonedETH is IClonedETH, ERC20 {
+  constructor() ERC20("Cloned ETH", "ClonedETH") {}
 
   function deposit() public payable {
-    if (msg.value <= 0) revert cETH__InvalidAmount();
+    if (msg.value <= 0) revert ClonedETH__InvalidAmount();
     _mint(msg.sender, msg.value);
     emit ETHDeposited(msg.sender, msg.value);
   }
@@ -28,7 +28,7 @@ contract cETH is ICETH, ERC20 {
 
     (bool success, ) = msg.sender.call{value: amount}("");
 
-    if (!success) revert cETH__TransferFailed();
+    if (!success) revert ClonedETH__TransferFailed();
 
     emit ETHWithdrawn(msg.sender, amount);
   }
