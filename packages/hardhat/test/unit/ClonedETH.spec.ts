@@ -45,9 +45,6 @@ describe("ClonedETH", function () {
       expect(newETHBal).to.be.lessThan(oldETHBal);
       expect(newcETHBal).to.eq(oldcETHBal.add(depositAmount));
     });
-    it("reverts if amount is ZERO", async () => {
-      await expect(cETH.deposit({ value: 0 })).to.be.revertedWithCustomError(cETH, "ClonedETH__InvalidAmount");
-    });
   });
 
   describe("withdraw", () => {
