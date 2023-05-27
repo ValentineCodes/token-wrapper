@@ -30,7 +30,7 @@ describe("ETHClone", function () {
       console.log("-----");
 
       await expect(ETHc.deposit({ value: depositAmount }))
-        .to.emit(ETHc, "ETHDeposited")
+        .to.emit(ETHc, "Deposit")
         .withArgs(valentine.address, depositAmount);
       console.log("successfully deposited 0.5 ETH✅");
       console.log("-----");
@@ -55,9 +55,7 @@ describe("ETHClone", function () {
       console.log(`old ETHc balance: ${ethers.utils.formatEther(oldETHcBal)} ETHc`);
       console.log("-----");
 
-      await expect(ETHc.withdraw(withdrawAmount))
-        .to.emit(ETHc, "ETHWithdrawn")
-        .withArgs(valentine.address, withdrawAmount);
+      await expect(ETHc.withdraw(withdrawAmount)).to.emit(ETHc, "Withdraw").withArgs(valentine.address, withdrawAmount);
       console.log("successfully withdrew 0.2 ETHc✅");
       console.log("-----");
 

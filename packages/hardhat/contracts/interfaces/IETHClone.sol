@@ -10,7 +10,7 @@ interface IETHClone is IERC20 {
    * @param owner Address of depositor
    * @param amount Amount deposited
    */
-  event ETHDeposited(address indexed owner, uint256 indexed amount);
+  event Deposit(address indexed owner, uint256 indexed amount);
 
   /**
    *
@@ -18,7 +18,7 @@ interface IETHClone is IERC20 {
    * @param owner Address of withdrawer
    * @param amount Amount withdrawn
    */
-  event ETHWithdrawn(address indexed owner, uint256 indexed amount);
+  event Withdraw(address indexed owner, uint256 indexed amount);
 
   /**
    *
