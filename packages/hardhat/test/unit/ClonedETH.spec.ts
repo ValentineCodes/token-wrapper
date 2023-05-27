@@ -29,11 +29,10 @@ describe("ClonedETH", function () {
       console.log(`old cETH balance: ${ethers.utils.formatEther(oldcETHBal)} cETH`);
       console.log("-----");
 
-      console.log("depositing 0.5 ETH...");
       await expect(cETH.deposit({ value: depositAmount }))
         .to.emit(cETH, "ETHDeposited")
         .withArgs(valentine.address, depositAmount);
-      console.log("deposit successful✅");
+      console.log("successfully deposited 0.5 ETH✅");
       console.log("-----");
 
       const newETHBal = await valentine.getBalance();
@@ -56,11 +55,10 @@ describe("ClonedETH", function () {
       console.log(`old cETH balance: ${ethers.utils.formatEther(oldcETHBal)} cETH`);
       console.log("-----");
 
-      console.log("withdrawing 0.2 cETH...");
       await expect(cETH.withdraw(withdrawAmount))
         .to.emit(cETH, "ETHWithdrawn")
         .withArgs(valentine.address, withdrawAmount);
-      console.log("withdrawal successful✅");
+      console.log("successfully withdrew 0.2 cETH✅");
       console.log("-----");
 
       const newETHBal = await valentine.getBalance();
@@ -86,12 +84,11 @@ describe("ClonedETH", function () {
       console.log(`old cETH balance: ${ethers.utils.formatEther(oldcETHBal)} cETH`);
       console.log("-----");
 
-      console.log("transferring 0.5 ETH to iETH...");
       await valentine.sendTransaction({
         to: cETH.address,
         value: depositAmount,
       });
-      console.log("transfer successful✅");
+      console.log("successfully transferred 0.5 ETH✅");
       console.log("-----");
 
       const newETHBal = await valentine.getBalance();
