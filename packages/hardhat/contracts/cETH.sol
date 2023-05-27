@@ -6,7 +6,6 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 import {ICETH} from "./interfaces/ICETH.sol";
 
-error cETH__InsufficientFunds();
 error cETH__TransferFailed();
 error cETH__InvalidAmount();
 
@@ -25,8 +24,6 @@ contract cETH is ICETH, ERC20 {
   }
 
   function withdraw(uint256 amount) public {
-    if (balanceOf(msg.sender) < amount) revert cETH__InsufficientFunds();
-
     _burn(msg.sender, amount);
 
     (bool success, ) = msg.sender.call{value: amount}("");

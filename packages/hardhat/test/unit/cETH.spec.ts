@@ -29,9 +29,12 @@ describe("cETH", function () {
       console.log(`old cETH balance: ${ethers.utils.formatEther(oldcETHBal)} cETH`);
       console.log("-----");
 
+      console.log("depositing 0.5 ETH...");
       await expect(cETH.deposit({ value: depositAmount }))
         .to.emit(cETH, "ETHDeposited")
         .withArgs(valentine.address, depositAmount);
+      console.log("deposit successful✅");
+      console.log("-----");
 
       const newETHBal = await valentine.getBalance();
       const newcETHBal = await cETH.balanceOf(valentine.address);
@@ -55,9 +58,13 @@ describe("cETH", function () {
       console.log(`old ETH balance: ${ethers.utils.formatEther(oldETHBal)} ETH`);
       console.log(`old cETH balance: ${ethers.utils.formatEther(oldcETHBal)} cETH`);
       console.log("-----");
+
+      console.log("withdrawing 0.2 cETH...");
       await expect(cETH.withdraw(withdrawAmount))
         .to.emit(cETH, "ETHWithdrawn")
         .withArgs(valentine.address, withdrawAmount);
+      console.log("withdrawal successful✅");
+      console.log("-----");
 
       const newETHBal = await valentine.getBalance();
       const newcETHBal = await cETH.balanceOf(valentine.address);
@@ -69,10 +76,7 @@ describe("cETH", function () {
       expect(newcETHBal).to.eq(oldcETHBal.sub(withdrawAmount));
     });
     it("reverts if balance is insufficient", async () => {
-      await expect(cETH.withdraw(ethers.utils.parseEther("0.55"))).to.revertedWithCustomError(
-        cETH,
-        "cETH__InsufficientFunds",
-      );
+      await expect(cETH.withdraw(ethers.utils.parseEther("0.55"))).to.reverted;
     });
   });
 
@@ -85,10 +89,13 @@ describe("cETH", function () {
       console.log(`old cETH balance: ${ethers.utils.formatEther(oldcETHBal)} cETH`);
       console.log("-----");
 
+      console.log("transferring 0.5 ETH to iETH...");
       await valentine.sendTransaction({
         to: cETH.address,
         value: depositAmount,
       });
+      console.log("transfer successful✅");
+      console.log("-----");
 
       const newETHBal = await valentine.getBalance();
       const newcETHBal = await cETH.balanceOf(valentine.address);
