@@ -4,14 +4,6 @@ pragma solidity ^0.8.18;
 interface ITokenClone {
   /**
    *
-   * @notice Emitted when an amount deposited by mistake is recovered
-   * @param account Address of depositor
-   * @param amount Amount recovered
-   */
-  event DepositRecovered(address account, uint256 amount);
-
-  /**
-   *
    * @notice Allows a user to deposit underlying tokens and mint the corresponding number of cloned tokens.
    * @dev TokenClone must be approved to spend {amount}
    * @param amount Amount to be deposited

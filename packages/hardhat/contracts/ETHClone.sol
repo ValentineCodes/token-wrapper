@@ -18,7 +18,6 @@ contract ETHClone is IETHClone, ERC20 {
 
   function deposit() public payable {
     _mint(msg.sender, msg.value);
-    emit Deposit(msg.sender, msg.value);
   }
 
   function withdraw(uint256 amount) public {
@@ -27,8 +26,6 @@ contract ETHClone is IETHClone, ERC20 {
     (bool success, ) = msg.sender.call{value: amount}("");
 
     if (!success) revert ETHClone__TransferFailed();
-
-    emit Withdraw(msg.sender, amount);
   }
 
   receive() external payable {
