@@ -613,6 +613,11 @@ const contracts = {
               type: "constructor",
             },
             {
+              inputs: [],
+              name: "L2TokenClone__NonceAlreadyProcessed",
+              type: "error",
+            },
+            {
               anonymous: false,
               inputs: [
                 {
@@ -679,6 +684,31 @@ const contracts = {
                 },
               ],
               name: "Transfer",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
+                  internalType: "address",
+                  name: "owner",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "nonce",
+                  type: "uint256",
+                },
+              ],
+              name: "Withdraw",
               type: "event",
             },
             {
@@ -834,6 +864,11 @@ const contracts = {
                   name: "amount",
                   type: "uint256",
                 },
+                {
+                  internalType: "uint256",
+                  name: "otherChainNonce",
+                  type: "uint256",
+                },
               ],
               name: "mint",
               outputs: [],
@@ -848,6 +883,19 @@ const contracts = {
                   internalType: "string",
                   name: "",
                   type: "string",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "nonce",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
                 },
               ],
               stateMutability: "view",
@@ -987,6 +1035,11 @@ const contracts = {
             },
             {
               inputs: [],
+              name: "L2TokenVault__NonceAlreadyProcessed",
+              type: "error",
+            },
+            {
+              inputs: [],
               name: "L2TokenVault__TransferFailed",
               type: "error",
             },
@@ -1008,6 +1061,12 @@ const contracts = {
                   indexed: false,
                   internalType: "uint256",
                   name: "amount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "nonce",
                   type: "uint256",
                 },
               ],
@@ -1086,6 +1145,19 @@ const contracts = {
             },
             {
               inputs: [],
+              name: "nonce",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
               name: "owner",
               outputs: [
                 {
@@ -1114,6 +1186,11 @@ const contracts = {
                 {
                   internalType: "uint256",
                   name: "amount",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "otherChainNonce",
                   type: "uint256",
                 },
               ],
@@ -1763,7 +1840,7 @@ const contracts = {
       chainId: "80001",
       contracts: {
         L2TokenVault: {
-          address: "0xbc0E34459151bec77c75ef205fC7507CaC64588e",
+          address: "0x55aE718014609548CC2e935CBfd8306988084959",
           abi: [
             {
               inputs: [],
@@ -1778,6 +1855,11 @@ const contracts = {
             {
               inputs: [],
               name: "L2TokenVault__InsufficientFunds",
+              type: "error",
+            },
+            {
+              inputs: [],
+              name: "L2TokenVault__NonceAlreadyProcessed",
               type: "error",
             },
             {
@@ -1803,6 +1885,12 @@ const contracts = {
                   indexed: false,
                   internalType: "uint256",
                   name: "amount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "nonce",
                   type: "uint256",
                 },
               ],
@@ -1881,6 +1969,19 @@ const contracts = {
             },
             {
               inputs: [],
+              name: "nonce",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
               name: "owner",
               outputs: [
                 {
@@ -1909,6 +2010,11 @@ const contracts = {
                 {
                   internalType: "uint256",
                   name: "amount",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "otherChainNonce",
                   type: "uint256",
                 },
               ],
@@ -1952,7 +2058,7 @@ const contracts = {
       chainId: "11155111",
       contracts: {
         L2TokenClone: {
-          address: "0xA0CC215CA13E56C04584F38ba9736fae33A88c29",
+          address: "0x5a35E10a6AF032F8F2fe4184454B8A4cC406e438",
           abi: [
             {
               inputs: [
@@ -1969,6 +2075,11 @@ const contracts = {
               ],
               stateMutability: "nonpayable",
               type: "constructor",
+            },
+            {
+              inputs: [],
+              name: "L2TokenClone__NonceAlreadyProcessed",
+              type: "error",
             },
             {
               anonymous: false,
@@ -2037,6 +2148,31 @@ const contracts = {
                 },
               ],
               name: "Transfer",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
+                  internalType: "address",
+                  name: "owner",
+                  type: "address",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256",
+                  name: "nonce",
+                  type: "uint256",
+                },
+              ],
+              name: "Withdraw",
               type: "event",
             },
             {
@@ -2192,6 +2328,11 @@ const contracts = {
                   name: "amount",
                   type: "uint256",
                 },
+                {
+                  internalType: "uint256",
+                  name: "otherChainNonce",
+                  type: "uint256",
+                },
               ],
               name: "mint",
               outputs: [],
@@ -2206,6 +2347,19 @@ const contracts = {
                   internalType: "string",
                   name: "",
                   type: "string",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "nonce",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "",
+                  type: "uint256",
                 },
               ],
               stateMutability: "view",

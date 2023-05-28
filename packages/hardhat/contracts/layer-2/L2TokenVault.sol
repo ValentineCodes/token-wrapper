@@ -19,17 +19,18 @@ contract L2TokenVault is Ownable {
   uint256 public nonce;
 
   mapping(address owner => uint256 amount) private s_balances;
-  mapping(address owner => mapping(uint256 nonce => bool)) private s_processedNonce;
+  mapping(uint256 nonce => bool) public processedNonce;
 
   function transfer(address to, uint256 amount, uint256 otherChainNonce) public onlyOwner {
     if (to == address(0)) revert L2TokenVault__ZeroAddress();
-    if (s_processedNonce[to][otherChainNonce]) revert L2TokenVault__NonceAlreadyProcessed();
-
-    s_processedNonce[to][otherChainNonce] = true;
 
     uint256 toBalance = s_balances[to];
 
     if (toBalance < amount) revert L2TokenVault__InsufficientFunds();
+
+    if (processedNonce[otherChainNonce]) revert L2TokenVault__NonceAlreadyProcessed();
+
+    processedNonce[otherChainNonce] = true;
 
     unchecked {
       s_balances[to] = toBalance - amount;

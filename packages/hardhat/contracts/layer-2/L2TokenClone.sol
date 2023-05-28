@@ -13,7 +13,7 @@ contract L2TokenClone is ERC20, Ownable {
 
   uint256 public nonce;
 
-  mapping(address owner => mapping(uint256 nonce => bool)) private s_processedNonce;
+  mapping(uint256 nonce => bool) public processedNonce;
 
   function burn(uint256 amount) public {
     _burn(msg.sender, amount);
@@ -24,9 +24,9 @@ contract L2TokenClone is ERC20, Ownable {
   }
 
   function mint(address to, uint256 amount, uint256 otherChainNonce) public onlyOwner {
-    if (s_processedNonce[to][otherChainNonce]) revert L2TokenClone__NonceAlreadyProcessed();
+    if (processedNonce[otherChainNonce]) revert L2TokenClone__NonceAlreadyProcessed();
 
-    s_processedNonce[to][otherChainNonce] = true;
+    processedNonce[otherChainNonce] = true;
 
     _mint(to, amount);
   }
