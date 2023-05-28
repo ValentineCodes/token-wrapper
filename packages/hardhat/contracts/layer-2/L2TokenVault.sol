@@ -8,18 +8,24 @@ error L2TokenVault__ZeroAddress();
 error L2TokenVault__InsufficientFunds();
 error L2TokenVault__InsufficientAmount();
 error L2TokenVault__InsufficientFees();
+error L2TokenVault__NonceAlreadyProcessed();
 
 contract L2TokenVault is Ownable {
   event Transfer(address to, uint256 amount);
-  event Deposit(address depositor, uint256 amount);
+  event Deposit(address depositor, uint256 amount, uint256 nonce);
 
   uint256 private constant DEPOSIT_FEE = 0.01 ether;
   uint256 private s_fees;
+  uint256 public nonce;
 
   mapping(address owner => uint256 amount) private s_balances;
+  mapping(address owner => mapping(uint256 nonce => bool)) private s_processedNonce;
 
-  function transfer(address to, uint256 amount) public onlyOwner {
+  function transfer(address to, uint256 amount, uint256 otherChainNonce) public onlyOwner {
     if (to == address(0)) revert L2TokenVault__ZeroAddress();
+    if (s_processedNonce[to][otherChainNonce]) revert L2TokenVault__NonceAlreadyProcessed();
+
+    s_processedNonce[to][otherChainNonce] = true;
 
     uint256 toBalance = s_balances[to];
 
@@ -66,6 +72,8 @@ contract L2TokenVault is Ownable {
     s_fees += DEPOSIT_FEE;
     s_balances[msg.sender] += amount;
 
-    emit Deposit(msg.sender, amount);
+    nonce++;
+
+    emit Deposit(msg.sender, amount, nonce);
   }
 }
