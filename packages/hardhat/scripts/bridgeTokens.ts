@@ -14,17 +14,11 @@ const handleDeposits = async () => {
   console.log("listening for deposits...");
   console.log("-----");
 
-  await valentine.sendTransaction({
-    to: vault.address,
-    value: ethers.utils.parseEther("0.5"),
-  });
-  console.log("transferred 0.5 MATIC to vault✅");
-
   vault.on("Deposit", async (depositor, amount) => {
-    // test token cloning
+    console.log(`deposited ${ethers.utils.formatEther(amount)} MATIC(fee: 0.01 MATIC)✅`);
+
     const oldBal = await tokenClone.balanceOf(depositor);
     console.log(`old balance: ${ethers.utils.formatEther(oldBal)} MATICc`);
-    console.log(`deposited ${ethers.utils.formatEther(amount)} MATIC(fee: 0.01 MATIC)✅`);
 
     await tokenClone.connect(owner).mint(depositor, amount);
     console.log(`minted ${ethers.utils.formatEther(amount)} MATICc✅`);
@@ -32,23 +26,6 @@ const handleDeposits = async () => {
     const newBal = await tokenClone.balanceOf(depositor);
     console.log(`new balance: ${ethers.utils.formatEther(newBal)} MATICc`);
     console.log("-----");
-
-    // test fee withdrawal
-    const provider = ethers.provider;
-
-    const oldCustodialBal = await provider.getBalance(owner.address);
-    console.log(`old custodial balance: ${ethers.utils.formatEther(oldCustodialBal)} MATIC`);
-
-    const fees = await vault.getFees();
-    await vault.withdrawFees();
-    console.log(`withdrew ${ethers.utils.formatEther(fees)} MATIC fees✅`);
-
-    const newCustodialBal = await provider.getBalance(owner.address);
-    console.log(`new custodial balance: ${ethers.utils.formatEther(newCustodialBal)} MATIC`);
-    console.log("-----");
-
-    await tokenClone.burn(newBal);
-    console.log(`burned ${ethers.utils.formatEther(newBal)} MATIC✅`);
   });
 };
 
@@ -64,8 +41,8 @@ const handleWithdrawals = async () => {
 
   tokenClone.on("Transfer", async (from, to, amount) => {
     if (to == ZERO_ADDRESS) {
+      console.log(`burned ${ethers.utils.formatEther(amount)} MATICc`);
       const provider = ethers.provider;
-
       const oldBal = await provider.getBalance(from);
       console.log(`old balance: ${ethers.utils.formatEther(oldBal)} MATIC`);
 
