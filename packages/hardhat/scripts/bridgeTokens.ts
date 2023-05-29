@@ -26,6 +26,9 @@ const L2TokenVault = JSON.parse(
 );
 const L2TokenClone = JSON.parse(fs.readFileSync("./deployments/sepolia/L2TokenClone.json", { encoding: "utf8" }));
 
+console.log(`vault: ${L2TokenVault.address}`);
+console.log(`tokenClone: ${L2TokenClone.address}`);
+
 // contract instances
 const vault = new ethers.Contract(L2TokenVault.address, L2TokenVault.abi, mumbaiSigner);
 const tokenClone = new ethers.Contract(L2TokenClone.address, L2TokenClone.abi, sepoliaSigner);
@@ -41,7 +44,8 @@ const handleDeposits = async () => {
     console.log(`old balance: ${ethers.utils.formatEther(oldBal)} MATICc`);
 
     // await tokenClone.connect(owner).mint(depositor, amount, nonce)
-    await tokenClone.mint(depositor, amount, nonce);
+    const tx = await tokenClone.mint(depositor, amount, nonce);
+    await tx.wait(1);
     console.log(`minted ${ethers.utils.formatEther(amount)} MATICc✅`);
 
     const newBal = await tokenClone.balanceOf(depositor);
@@ -60,7 +64,8 @@ const handleWithdrawals = async () => {
     const oldBal = await mumbaiProvider.getBalance(withdrawer);
     console.log(`old balance: ${ethers.utils.formatEther(oldBal)} MATIC`);
 
-    await vault.transfer(withdrawer, amount, nonce);
+    const tx = await vault.transfer(withdrawer, amount, nonce);
+    await tx.wait(1);
     console.log(`transferred ${ethers.utils.formatEther(amount)} MATIC✅ to depositor`);
 
     const newBal = await mumbaiProvider.getBalance(withdrawer);
