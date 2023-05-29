@@ -1,5 +1,5 @@
 {
-  "name": "token-bridge",
+  "name": "@token-wrapper/token-bridge",
   "version": "1.0.0",
   "description": "Bridge Mumbai MATIC token to Sepolia testnet",
   "main": "index.js",
