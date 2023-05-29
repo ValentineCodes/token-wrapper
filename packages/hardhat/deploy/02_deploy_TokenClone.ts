@@ -22,11 +22,11 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
-  const afterlife = await ethers.getContract("AfterLife");
+  const l2TokenClone = await ethers.getContract("L2TokenClone");
 
   await deploy("TokenClone", {
     from: deployer,
-    args: [afterlife.address, "Cloned AfterLife", "cAL"],
+    args: [l2TokenClone.address, "Cloned MATICc", "cMATICc"],
     log: true,
     autoMine: true,
   });
