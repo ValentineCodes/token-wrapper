@@ -7,7 +7,7 @@ interface Token {
     amount: number
 }
 type Props = {
-    label: string;
+    label?: string;
     tokens: string[];
     amount: string;
     onChange: (token: Token) => void;
