@@ -1,6 +1,8 @@
 import React from 'react'
 import { ArrowPathIcon } from '@heroicons/react/24/solid'
 import SelectNetwork from './SelectNetwork'
+import { NumberInput } from '@chakra-ui/react'
+import InputTokenAmount from './InputTokenAmount'
 
 type Props = {}
 function BridgeForm({}: Props) {
@@ -17,6 +19,12 @@ function BridgeForm({}: Props) {
 
           <SelectNetwork img={{url: '/images/eth-icon.png', alt: 'sepolia'}} options={["Sepolia"]} onSelect={value => console.log(value)} />
         </div>
+
+        <InputTokenAmount label='You send' tokens={["MATIC"]} onChange={token => console.log(token)} />
+        <p className='text-right text-xs text-gray-700'>Balance: 25,400</p>
+        <InputTokenAmount label='You receive' tokens={["MATICc"]} onChange={token => console.log(token)} />
+
+        <button className="border border-[#624DE3] bg-[#624DE3] text-white hover:bg-white hover:text-[#624DE3] transition-all px-4 py-2 rounded-md shadow-lg w-full mt-5">Deposit</button>
     </form>
   )
 }

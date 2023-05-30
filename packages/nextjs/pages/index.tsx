@@ -12,7 +12,7 @@ const Home: NextPage = () => {
         <meta name="description" content="Wrap Layer-1 and Layer-2 tokens" />
       </Head>
 
-      <main className="flex justify-center items-center p-4 mx-auto">
+      <main className="flex justify-center items-center p-4 m-auto">
         <BridgeForm />
       </main>
     </>
