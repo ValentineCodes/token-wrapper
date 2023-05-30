@@ -1,5 +1,6 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
+import { network } from "hardhat";
 
 /**
  * Deploys a contract named "YourContract" using the deployer account and
@@ -22,11 +23,13 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
-  await deploy("AfterLife", {
-    from: deployer,
-    log: true,
-    autoMine: true,
-  });
+  if (["localhost, hardhat"].includes(network.name)) {
+    await deploy("AfterLife", {
+      from: deployer,
+      log: true,
+      autoMine: true,
+    });
+  }
 
   // Get the deployed contract
   // const yourContract = await hre.ethers.getContract("YourContract", deployer);
