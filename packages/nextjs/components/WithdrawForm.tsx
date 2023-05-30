@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from 'react'
-import { useSwitchNetwork, useChainId } from 'wagmi'
+import { useSwitchNetwork, useChainId, useAccount } from 'wagmi'
 import { ArrowPathIcon } from '@heroicons/react/24/solid'
 import SelectNetwork from './SelectNetwork'
 import InputTokenAmountForm from './InputTokenAmountForm'
 import Button from './Button'
+import { useAccountBalance } from '~~/hooks/scaffold-eth'
 
 const ETHEREUM_NETWORKS = [{
   name: "Sepolia",
@@ -21,9 +22,12 @@ type Props = {}
 function WithdrawForm({}: Props) {
   const [isNetworkSwitched, setIsNetworkSwitched] = useState(false)
   const {switchNetwork} = useSwitchNetwork()
+  const {address: account} = useAccount()
+  const {balance} = useAccountBalance(account)
   const chainId = useChainId()
   const [networkChainId, setNetworkChainId] = useState({layer1: ETHEREUM_NETWORKS[0].chainId, layer2: POLYGON_NETWORKS[0].chainId})
   const [selectedChainId, setSelectedChainId] = useState(ETHEREUM_NETWORKS[0].chainId)
+  const [amount, setAmount] = useState(0)
 
   useEffect(() => {
     if(isNetworkSwitched){
@@ -46,8 +50,8 @@ function WithdrawForm({}: Props) {
         </div>
         {chainId !== selectedChainId && <Button label="Switch Network" className="w-full" onClick={() => switchNetwork?.(selectedChainId)} />}
 
-        <InputTokenAmountForm tokens={isNetworkSwitched? SEPOLIA_TOKENS_CLONES : MUMBAI_TOKENS_CLONES} amount='' onChange={token => console.log(token)} />
-        <p className='text-right text-sm text-gray-700'>Balance: 25,400</p>
+        <InputTokenAmountForm tokens={isNetworkSwitched? SEPOLIA_TOKENS_CLONES : MUMBAI_TOKENS_CLONES} value={String(amount)} onChange={token => setAmount(token.amount)} />
+        <p className='text-right text-sm text-gray-700'>Balance: {balance?.toFixed(3)}</p>
 
         <Button label='Withdraw' className='w-full' onClick={() => true} />
       </>
