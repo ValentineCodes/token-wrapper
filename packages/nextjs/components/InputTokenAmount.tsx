@@ -9,10 +9,11 @@ interface Token {
 type Props = {
     label: string;
     tokens: string[];
+    amount: string;
     onChange: (token: Token) => void;
 }
 
-function InputTokenAmount({label, tokens, onChange}: Props) {
+function InputTokenAmount({label, tokens, amount, onChange}: Props) {
 
     const [token, setToken] = useState<Token>({name: tokens[0].toLowerCase(), amount: 0})
 
@@ -23,14 +24,14 @@ function InputTokenAmount({label, tokens, onChange}: Props) {
     }
 
     useEffect(() => {
-        console.log(token)
+        onChange(token)
     }, [token])
 
   return (
     <div className='mt-5'>
         <label className='text-gray-700 text-sm'>{label}</label>
         <NumberInput className='flex mt-2'>
-            <NumberInputField placeholder='Amount' onChange={e => handleAmoutChange(Number(e.target.value))} />
+            <NumberInputField placeholder='Amount' value={amount} onChange={e => handleAmoutChange(Number(e.target.value))} />
             <div className='w-[180px]'>
                 <Select defaultValue={tokens[0].toLowerCase()} className='w-[50px]' onChange={e => setToken(token => ({...token, name: e.target.value}))}>
                     {tokens.map(token =>  <option value={token.toLowerCase()}>{token}</option>)}

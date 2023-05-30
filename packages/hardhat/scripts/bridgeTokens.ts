@@ -38,7 +38,7 @@ const handleDeposits = async () => {
   console.log("-----");
 
   vault.on("Deposit", async (depositor, amount, nonce) => {
-    console.log(`deposited ${ethers.utils.formatEther(amount)} MATIC(fee: 0.01 MATIC)✅`);
+    console.log(`deposited ${ethers.utils.formatEther(amount)} MATIC✅`);
 
     const oldBal = await tokenClone.balanceOf(depositor);
     console.log(`old balance: ${ethers.utils.formatEther(oldBal)} MATICc`);

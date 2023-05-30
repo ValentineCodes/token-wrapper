@@ -2,6 +2,7 @@
 pragma solidity ^0.8.18;
 
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {Helpers} from "../libraries/Helpers.sol";
 
 error L2TokenVault__TransferFailed();
 error L2TokenVault__ZeroAddress();
@@ -14,7 +15,6 @@ contract L2TokenVault is Ownable {
   event Transfer(address to, uint256 amount);
   event Deposit(address depositor, uint256 amount, uint256 nonce);
 
-  uint256 private constant DEPOSIT_FEE = 0.01 ether;
   uint256 private s_fees;
   uint256 public nonce;
 
@@ -66,11 +66,11 @@ contract L2TokenVault is Ownable {
   }
 
   receive() external payable {
-    if (msg.value <= DEPOSIT_FEE) revert L2TokenVault__InsufficientAmount();
+    if (msg.value <= 0) revert L2TokenVault__InsufficientAmount();
 
-    uint256 amount = msg.value - DEPOSIT_FEE;
+    (uint256 amount, uint256 fee) = Helpers.extractFee(msg.value);
 
-    s_fees += DEPOSIT_FEE;
+    s_fees += fee;
     s_balances[msg.sender] += amount;
 
     nonce++;
