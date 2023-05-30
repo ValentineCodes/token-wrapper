@@ -593,7 +593,7 @@ const contracts = {
             },
           ],
         },
-        L2TokenClone: {
+        BridgeTokenClone: {
           address: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
           abi: [
             {
@@ -614,7 +614,7 @@ const contracts = {
             },
             {
               inputs: [],
-              name: "L2TokenClone__NonceAlreadyProcessed",
+              name: "BridgeTokenClone__AlreadyProcessedNonce",
               type: "error",
             },
             {
@@ -1015,37 +1015,37 @@ const contracts = {
             },
           ],
         },
-        L2TokenVault: {
+        BridgeVault: {
           address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
           abi: [
             {
               inputs: [],
-              name: "L2TokenVault__InsufficientAmount",
+              name: "BridgeVault__InsufficientAmount",
               type: "error",
             },
             {
               inputs: [],
-              name: "L2TokenVault__InsufficientFees",
+              name: "BridgeVault__InsufficientFees",
               type: "error",
             },
             {
               inputs: [],
-              name: "L2TokenVault__InsufficientFunds",
+              name: "BridgeVault__InsufficientFunds",
               type: "error",
             },
             {
               inputs: [],
-              name: "L2TokenVault__NonceAlreadyProcessed",
+              name: "BridgeVault__AlreadyProcessedNonce",
               type: "error",
             },
             {
               inputs: [],
-              name: "L2TokenVault__TransferFailed",
+              name: "BridgeVault__TransferFailed",
               type: "error",
             },
             {
               inputs: [],
-              name: "L2TokenVault__ZeroAddress",
+              name: "BridgeVault__ZeroAddress",
               type: "error",
             },
             {
@@ -1839,37 +1839,37 @@ const contracts = {
       name: "polygonMumbai",
       chainId: "80001",
       contracts: {
-        L2TokenVault: {
+        BridgeVault: {
           address: "0xeF20ad6245cf8E854de8952BbB04bf8594914AAf",
           abi: [
             {
               inputs: [],
-              name: "L2TokenVault__InsufficientAmount",
+              name: "BridgeVault__InsufficientAmount",
               type: "error",
             },
             {
               inputs: [],
-              name: "L2TokenVault__InsufficientFees",
+              name: "BridgeVault__InsufficientFees",
               type: "error",
             },
             {
               inputs: [],
-              name: "L2TokenVault__InsufficientFunds",
+              name: "BridgeVault__InsufficientFunds",
               type: "error",
             },
             {
               inputs: [],
-              name: "L2TokenVault__NonceAlreadyProcessed",
+              name: "BridgeVault__AlreadyProcessedNonce",
               type: "error",
             },
             {
               inputs: [],
-              name: "L2TokenVault__TransferFailed",
+              name: "BridgeVault__TransferFailed",
               type: "error",
             },
             {
               inputs: [],
-              name: "L2TokenVault__ZeroAddress",
+              name: "BridgeVault__ZeroAddress",
               type: "error",
             },
             {
@@ -2385,7 +2385,7 @@ const contracts = {
             },
           ],
         },
-        L2TokenClone: {
+        BridgeTokenClone: {
           address: "0xEB49F5F7C4f1B21C9b667090878D219EB1Ca71A5",
           abi: [
             {
@@ -2406,7 +2406,7 @@ const contracts = {
             },
             {
               inputs: [],
-              name: "L2TokenClone__NonceAlreadyProcessed",
+              name: "BridgeTokenClone__AlreadyProcessedNonce",
               type: "error",
             },
             {

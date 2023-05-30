@@ -1,16 +1,16 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { deployments, ethers } from "hardhat";
-import { AfterLife, TokenClone } from "../../typechain-types";
+import { AfterLife, ERC20TokenClone } from "../../typechain-types";
 
-describe("TokenClone", function () {
+describe("ERC20TokenClone", function () {
   const depositAmount = ethers.utils.parseEther("0.5");
   const withdrawAmount = ethers.utils.parseEther("0.2");
 
   let owner: SignerWithAddress;
   let valentine: SignerWithAddress;
 
-  let cToken: TokenClone;
+  let cToken: ERC20TokenClone;
   let afterlife: AfterLife;
 
   before(async () => {
@@ -19,9 +19,9 @@ describe("TokenClone", function () {
     owner = signers[0];
     valentine = signers[1];
 
-    await deployments.fixture(["AfterLife", "TokenClone"]);
+    await deployments.fixture(["AfterLife", "ERC20TokenClone"]);
 
-    cToken = await ethers.getContract("TokenClone", valentine);
+    cToken = await ethers.getContract("ERC20TokenClone", valentine);
     afterlife = await ethers.getContract("AfterLife", valentine);
   });
 

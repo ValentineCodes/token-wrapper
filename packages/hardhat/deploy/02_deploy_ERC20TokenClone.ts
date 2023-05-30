@@ -1,5 +1,6 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
+import { ethers } from "hardhat";
 
 /**
  * Deploys a contract named "YourContract" using the deployer account and
@@ -21,9 +22,11 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
-  await deploy("L2TokenClone", {
+  const afterlife = await ethers.getContract("AfterLife");
+
+  await deploy("ERC20TokenClone", {
     from: deployer,
-    args: ["MATIC Clone", "MATICc"],
+    args: [afterlife.address, "AfterLife Clone", "ALc"],
     log: true,
     autoMine: true,
   });
@@ -36,4 +39,4 @@ export default deployYourContract;
 
 // Tags are useful if you have multiple deploy files and only want to run one of them.
 // e.g. yarn deploy --tags YourContract
-deployYourContract.tags = ["L2TokenClone"];
+deployYourContract.tags = ["ERC20TokenClone"];

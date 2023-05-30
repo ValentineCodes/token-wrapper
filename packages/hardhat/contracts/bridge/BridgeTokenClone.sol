@@ -4,9 +4,9 @@ pragma solidity ^0.8.18;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-error L2TokenClone__NonceAlreadyProcessed();
+error BridgeTokenClone__AlreadyProcessedNonce();
 
-contract L2TokenClone is ERC20, Ownable {
+contract BridgeTokenClone is ERC20, Ownable {
   event Withdraw(address owner, uint256 amount, uint256 nonce);
 
   constructor(string memory name, string memory symbol) ERC20(name, symbol) {}
@@ -24,7 +24,7 @@ contract L2TokenClone is ERC20, Ownable {
   }
 
   function mint(address to, uint256 amount, uint256 otherChainNonce) public onlyOwner {
-    if (processedNonce[otherChainNonce]) revert L2TokenClone__NonceAlreadyProcessed();
+    if (processedNonce[otherChainNonce]) revert BridgeTokenClone__AlreadyProcessedNonce();
 
     processedNonce[otherChainNonce] = true;
 

@@ -4,14 +4,14 @@ pragma solidity ^0.8.18;
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Helpers} from "../libraries/Helpers.sol";
 
-error L2TokenVault__TransferFailed();
-error L2TokenVault__ZeroAddress();
-error L2TokenVault__InsufficientFunds();
-error L2TokenVault__InsufficientAmount();
-error L2TokenVault__InsufficientFees();
-error L2TokenVault__NonceAlreadyProcessed();
+error BridgeVault__TransferFailed();
+error BridgeVault__ZeroAddress();
+error BridgeVault__InsufficientFunds();
+error BridgeVault__InsufficientAmount();
+error BridgeVault__InsufficientFees();
+error BridgeVault__AlreadyProcessedNonce();
 
-contract L2TokenVault is Ownable {
+contract BridgeVault is Ownable {
   event Transfer(address to, uint256 amount);
   event Deposit(address depositor, uint256 amount, uint256 nonce);
 
@@ -22,13 +22,13 @@ contract L2TokenVault is Ownable {
   mapping(uint256 nonce => bool) public processedNonce;
 
   function transfer(address to, uint256 amount, uint256 otherChainNonce) public onlyOwner {
-    if (to == address(0)) revert L2TokenVault__ZeroAddress();
+    if (to == address(0)) revert BridgeVault__ZeroAddress();
 
     uint256 toBalance = s_balances[to];
 
-    if (toBalance < amount) revert L2TokenVault__InsufficientFunds();
+    if (toBalance < amount) revert BridgeVault__InsufficientFunds();
 
-    if (processedNonce[otherChainNonce]) revert L2TokenVault__NonceAlreadyProcessed();
+    if (processedNonce[otherChainNonce]) revert BridgeVault__AlreadyProcessedNonce();
 
     processedNonce[otherChainNonce] = true;
 
@@ -37,7 +37,7 @@ contract L2TokenVault is Ownable {
     }
 
     (bool success, ) = payable(to).call{value: amount}("");
-    if (!success) revert L2TokenVault__TransferFailed();
+    if (!success) revert BridgeVault__TransferFailed();
 
     emit Transfer(to, amount);
   }
@@ -45,14 +45,14 @@ contract L2TokenVault is Ownable {
   function withdrawFees() public {
     uint256 fees = s_fees;
 
-    if (fees == 0) revert L2TokenVault__InsufficientFees();
+    if (fees == 0) revert BridgeVault__InsufficientFees();
 
     s_fees = 0;
 
     address owner = owner();
 
     (bool success, ) = owner.call{value: fees}("");
-    if (!success) revert L2TokenVault__TransferFailed();
+    if (!success) revert BridgeVault__TransferFailed();
 
     emit Transfer(owner, fees);
   }
@@ -66,7 +66,7 @@ contract L2TokenVault is Ownable {
   }
 
   receive() external payable {
-    if (msg.value <= 0) revert L2TokenVault__InsufficientAmount();
+    if (msg.value <= 0) revert BridgeVault__InsufficientAmount();
 
     (uint256 amount, uint256 fee) = Helpers.extractFee(msg.value);
 

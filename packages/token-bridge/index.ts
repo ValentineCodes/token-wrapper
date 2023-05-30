@@ -24,27 +24,27 @@ const mumbaiSigner = new ethers.Wallet(PRIVATE_KEY).connect(mumbaiProvider);
 const sepoliaSigner = new ethers.Wallet(PRIVATE_KEY).connect(sepoliaProvider);
 
 // contracts
-const L2TokenVault = JSON.parse(
-  fs.readFileSync("./contracts/L2TokenVault.json", {
+const BridgeVault = JSON.parse(
+  fs.readFileSync("./contracts/BridgeVault.json", {
     encoding: "utf8",
   })
 );
-const L2TokenClone = JSON.parse(
-  fs.readFileSync("./contracts/L2TokenClone.json", { encoding: "utf8" })
+const BridgeTokenClone = JSON.parse(
+  fs.readFileSync("./contracts/BridgeTokenClone.json", { encoding: "utf8" })
 );
 
-console.log(`vault: ${L2TokenVault.address}`);
-console.log(`tokenClone: ${L2TokenClone.address}`);
+console.log(`vault: ${BridgeVault.address}`);
+console.log(`tokenClone: ${BridgeTokenClone.address}`);
 
 // contract instances
 const vault = new ethers.Contract(
-  L2TokenVault.address,
-  L2TokenVault.abi,
+  BridgeVault.address,
+  BridgeVault.abi,
   mumbaiSigner
 );
 const tokenClone = new ethers.Contract(
-  L2TokenClone.address,
-  L2TokenClone.abi,
+  BridgeTokenClone.address,
+  BridgeTokenClone.abi,
   sepoliaSigner
 );
 
