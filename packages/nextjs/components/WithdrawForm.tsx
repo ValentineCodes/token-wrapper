@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import { ArrowPathIcon } from '@heroicons/react/24/solid'
 import SelectNetwork from './SelectNetwork'
-import InputTokenAmount from './InputTokenAmount'
+import InputTokenAmountForm from './InputTokenAmountForm'
 
 const SEPOLIA_TOKENS_CLONES = ["ETHc"]
 const MUMBAI_TOKENS_CLONES = ["MATICc"]
@@ -21,7 +21,7 @@ function WithdrawForm({}: Props) {
           <SelectNetwork img={{url: '/images/mumbai-icon.png', alt: 'mumbai'}} options={["Mumbai"]} onSelect={value => console.log(value)} />
         </div>
 
-        <InputTokenAmount tokens={isNetworkSwitched? MUMBAI_TOKENS_CLONES : SEPOLIA_TOKENS_CLONES} amount='' onChange={token => console.log(token)} />
+        <InputTokenAmountForm tokens={isNetworkSwitched? MUMBAI_TOKENS_CLONES : SEPOLIA_TOKENS_CLONES} amount='' onChange={token => console.log(token)} />
         <p className='text-right text-sm text-gray-700'>Balance: 25,400</p>
 
         <button className="border border-[#624DE3] bg-[#624DE3] text-white hover:bg-white hover:text-[#624DE3] transition-all px-4 py-2 rounded-md shadow-lg w-full mt-5">Withdraw</button>

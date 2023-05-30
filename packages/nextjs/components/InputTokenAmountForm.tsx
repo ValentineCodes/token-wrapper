@@ -13,7 +13,7 @@ type Props = {
     onChange: (token: Token) => void;
 }
 
-function InputTokenAmount({label, tokens, amount, onChange}: Props) {
+function InputTokenAmountForm({label, tokens, amount, onChange}: Props) {
 
     const [token, setToken] = useState<Token>({name: tokens[0].toLowerCase(), amount: 0})
 
@@ -42,4 +42,4 @@ function InputTokenAmount({label, tokens, amount, onChange}: Props) {
   )
 }
 
-export default InputTokenAmount
+export default InputTokenAmountForm
