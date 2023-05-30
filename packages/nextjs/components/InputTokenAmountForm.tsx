@@ -34,7 +34,7 @@ function InputTokenAmountForm({label, tokens, amount, onChange}: Props) {
             <NumberInputField placeholder='Amount' value={amount} onChange={e => handleAmoutChange(Number(e.target.value))} />
             <div className='w-[180px]'>
                 <Select defaultValue={tokens[0].toLowerCase()} className='w-[50px]' onChange={e => setToken(token => ({...token, name: e.target.value}))}>
-                    {tokens.map(token =>  <option value={token.toLowerCase()}>{token}</option>)}
+                    {tokens.map(token =>  <option key={token.toLowerCase()} value={token.toLowerCase()}>{token}</option>)}
                 </Select>
             </div>
         </NumberInput>

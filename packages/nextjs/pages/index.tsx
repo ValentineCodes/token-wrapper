@@ -1,8 +1,6 @@
 import React, {useState} from "react"
 import Head from "next/head";
-import Link from "next/link";
 import type { NextPage } from "next";
-import { BugAntIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import BridgeForm from "~~/components/BridgeForm";
 import WithdrawForm from "~~/components/WithdrawForm";
 
@@ -28,7 +26,7 @@ const Home: NextPage = () => {
             </span>
           </h1>
 
-          <form>
+          <form onSubmit={e => e.preventDefault()}>
             {isBridging? <BridgeForm /> : <WithdrawForm /> }
           </form>
         </section>
