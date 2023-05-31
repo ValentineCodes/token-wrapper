@@ -28,7 +28,7 @@ interface TokenClone {
 }
 
 const SEPOLIA_VAULTS = [{name: "ETH", address: ""}]
-const MUMBAI_VAULTS = [{name: "MATIC", address: "0xeF20ad6245cf8E854de8952BbB04bf8594914AAf"}]
+const MUMBAI_VAULTS = [{name: "MATIC", address: "0x737dD6121643a37bcCB542eB8b0085583fa7350e"}]
 const SEPOLIA_TOKENS_CLONES = [{name: "ETHc", address: ""}]
 const MUMBAI_TOKENS_CLONES = [{name: "MATICc", address: ""}]
 

@@ -22,11 +22,9 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
-  const ethClone = await ethers.getContract("ETHClone");
-
   await deploy("ERC20TokenClone", {
     from: deployer,
-    args: [ethClone.address, "ETHc Clone", "cETHc"],
+    args: ["0x10b9980C12DDC8B6b1d06C1d50B64f7d400CA0FD", "MATICc Clone", "cMATICc"],
     log: true,
     autoMine: true,
   });
