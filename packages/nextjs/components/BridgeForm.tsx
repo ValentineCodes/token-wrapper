@@ -69,7 +69,7 @@ function BridgeForm({}: Props) {
         value: ethers.utils.parseEther(String(token.amount))
       })
       await tx?.wait(1)
-      notification.success(`Deposited ${token.amount - (token.amount / 100)}`)
+      notification.success("Successful Deposit")
     } catch(error) {
       notification.error(JSON.stringify(error))
     } finally{
