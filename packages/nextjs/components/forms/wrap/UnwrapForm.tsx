@@ -130,7 +130,7 @@ function UnwrapForm({}: Props) {
             </div>
             {chainId !== network.chainId && <Button label="Switch Network" className="w-full" onClick={() => switchNetwork?.(network.chainId)} />}
 
-            <NumberInput className='flex mt-2'>
+            <NumberInput className='flex mt-7'>
             <NumberInputField className='w-full border border-gray-300 pl-2' placeholder='Amount' value={token.amount || ""} onChange={e => setToken(token => ({...token, amount: Number(e.target.value)}))} />
             <div className='w-[180px]'>
                 <Select defaultValue={TOKENS?.[0].name} className='w-[50px]' onChange={handleTokenChange}>

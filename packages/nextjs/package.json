@@ -20,6 +20,7 @@
     "@ethersproject/networks": "^5.7.1",
     "@ethersproject/web": "^5.7.1",
     "@heroicons/react": "^2.0.11",
+    "@metamask/detect-provider": "1.2.0",
     "@rainbow-me/rainbowkit": "^0.11.0",
     "@uniswap/sdk": "^3.0.3",
     "daisyui": "^2.31.0",

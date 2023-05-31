@@ -18,11 +18,19 @@ const NETWORKS = [
     }
 ]
 
-const TOKENS = [
+interface Token {
+    name: string;
+    isNative: boolean;
+    address: string;
+    cloneContract: string;
+    amount: number;
+}
+
+const TOKENS: Token[] = [
     {
         name: "ETH",
         isNative: true,
-        "address": "",
+        address: "",
         cloneContract: "0xaFe79D30940218584ec95dFF49cCBB03aa8B3682",
         amount: 0
     },
@@ -47,6 +55,7 @@ function WrapForm({}: Props) {
     const [token, setToken] = useState(TOKENS[0])
     const [isWrapping, setIsWrapping] = useState(false)
     const [balance, setBalance] = useState("")
+    const [wrappedToken, setWrappedToken] = useState<any>()
 
     const {data: erc20TokenClone, isLoading: isLoadingERC20TokenClone} = useDeployedContractInfo("ERC20TokenClone")
 
@@ -94,6 +103,13 @@ function WrapForm({}: Props) {
                 await tx?.wait(1)
                 
                 notification.success("That's a wrap!")
+
+                const contract = new ethers.Contract(token.cloneContract, erc20ABI, provider)
+                const [symbol, decimals] = await Promise.all([
+                    contract.symbol(),
+                    contract.decimals()
+                ])    
+                setWrappedToken({contract: token.cloneContract, symbol, decimals})
             } catch(error) {
                 notification.error(JSON.stringify(error))
             }
@@ -113,12 +129,44 @@ function WrapForm({}: Props) {
                 await depositTx.wait(1)
                 
                 notification.success("That's a wrap!")
+                const [symbol, decimals] = await Promise.all([
+                    tokenCloneContract.symbol(),
+                    tokenCloneContract.decimals()
+                ])    
+                setWrappedToken({contract: token.cloneContract, symbol, decimals})
             } catch(error) {
                 notification.error(JSON.stringify(error))
             }
         }
         notification.remove(notificationId)
         setIsWrapping(false)
+    }
+
+    const addTokenToMetamask = async () => {
+        if(!window.ethereum || !wrappedToken) return
+        try {
+            const isAdded = await window.ethereum.request({
+                method: "wallet_watchAsset",
+                params: {
+                    type: "ERC20",
+                    options: {
+                        address: wrappedToken.contract,
+                        symbol: wrappedToken.symbol,   
+                        decimals: wrappedToken.decimals
+                    }
+                }
+            })
+
+            if(isAdded) {
+                notification.success(`${wrappedToken.symbol} added to Metamask`)
+                setWrappedToken(null)
+            } else {
+                notification.error(`Failed to add ${wrappedToken.symbol} to Metamask`)
+            }
+        } catch(error) {
+            notification.error(`Failed to add ${wrappedToken.symbol} to Metamask`)
+            console.error(error)
+        }
     }
 
     useEffect(() => {
@@ -155,7 +203,7 @@ function WrapForm({}: Props) {
             </div>
             {chainId !== network.chainId && <Button label="Switch Network" className="w-full" onClick={() => switchNetwork?.(network.chainId)} />}
 
-            <NumberInput className='flex mt-2'>
+            <NumberInput className='flex mt-7'>
             <NumberInputField className='w-full border border-gray-300 pl-2' placeholder='Amount' value={token.amount || ""} onChange={e => setToken(token => ({...token, amount: Number(e.target.value)}))} />
             <div className='w-[180px]'>
                 <Select defaultValue={TOKENS?.[0].name} className='w-[50px]' onChange={handleTokenChange}>
@@ -164,6 +212,7 @@ function WrapForm({}: Props) {
             </div>
             </NumberInput>
             <p className='text-right text-sm text-gray-700'>Balance: {balance}</p>
+            {wrappedToken? <Button outline label={`Add ${wrappedToken.symbol} to Metamask`} onClick={addTokenToMetamask} /> : null}
 
             <Button label={token.isNative? "Wrap" : "Approve"} className='w-full' onClick={wrap} isLoading={isWrapping} />
         </>
