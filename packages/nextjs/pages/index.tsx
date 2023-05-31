@@ -2,6 +2,7 @@ import React, {useState} from "react"
 import Head from "next/head";
 import type { NextPage } from "next";
 import WrapForm from "~~/components/forms/wrap/WrapForm";
+import UnwrapForm from "~~/components/forms/wrap/UnwrapForm";
 
 const Home: NextPage = () => {
   const [isWrap, setIsWrap] = useState(true)
@@ -26,7 +27,7 @@ const Home: NextPage = () => {
           </h1>
 
           <form onSubmit={e => e.preventDefault()}>
-            {isWrap && <WrapForm />}
+            {isWrap? <WrapForm /> : <UnwrapForm />}
           </form>
         </section>
         
