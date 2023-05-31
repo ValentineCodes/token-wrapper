@@ -1,5 +1,5 @@
-import React, {useState} from 'react'
-import { useSwitchNetwork, useChainId, useAccount, useSigner, erc20ABI } from 'wagmi'
+import React, {useEffect, useState} from 'react'
+import { useSwitchNetwork, useChainId, useAccount, useProvider, useSigner, erc20ABI } from 'wagmi'
 import Button from '../../Button'
 import { useDeployedContractInfo } from '~~/hooks/scaffold-eth'
 import { NumberInput, NumberInputField, Select } from '@chakra-ui/react'
@@ -39,12 +39,14 @@ type Props = {}
 function WrapForm({}: Props) {
     const chainId = useChainId()
     const {switchNetwork} = useSwitchNetwork()
+    const provider = useProvider()
     const {data: signer, isLoading: isLoadingSigner} = useSigner()
-    const {address, isConnected} = useAccount()
+    const {address: account, isConnected} = useAccount()
 
     const [network, setNetwork] = useState(NETWORKS[0])
     const [token, setToken] = useState(TOKENS[0])
     const [isWrapping, setIsWrapping] = useState(false)
+    const [balance, setBalance] = useState("")
 
     const {data: erc20TokenClone, isLoading: isLoadingERC20TokenClone} = useDeployedContractInfo("ERC20TokenClone")
 
@@ -74,7 +76,10 @@ function WrapForm({}: Props) {
             notification.warning("Invalid amount!")
             return
         }
-
+        if(token.amount > Number(balance)) {
+            notification.error("Amount cannot be greater than balance")
+            return
+        }
 
         setIsWrapping(true)
         let notificationId
@@ -115,12 +120,33 @@ function WrapForm({}: Props) {
         notification.remove(notificationId)
         setIsWrapping(false)
     }
+
+    useEffect(() => {
+        (async () => {
+            if(isLoadingSigner || !isConnected) return
+            try {
+                if(token.isNative) {
+                    const balance = await provider.getBalance(account!)
+                    setBalance(Number(ethers.utils.formatEther(balance)).toFixed(4))
+                } else {
+                    const _token = new ethers.Contract(token.address, erc20ABI, signer)
+                    const balance = await _token.balanceOf(account)
+                    setBalance(Number(ethers.utils.formatEther(balance)).toFixed(4))
+                }
+            } catch(error) {
+                console.log(`Error reading balance of ${token.name}`)
+                console.error(error)
+                return
+            }
+        })()
+    }, [token, account, isWrapping])
+
     return (
         <>
             {/* Select Network */}
             <div className='flex flex-col items-center space-y-10 w-60 mx-auto' aria-label='network'>
                 <div className='flex justify-center item-center shadow-[0_0_5px_3px_#624DE3] p-2 rounded-3xl'>
-                <img src={network.img.url} alt={network.img.alt} className='w-16 h-16' />
+                    <img src={network.img.url} alt={network.img.alt} className='w-16 h-16' />
                 </div>
 
                 <Select onChange={handleNetworkChange}>
@@ -137,7 +163,7 @@ function WrapForm({}: Props) {
                 </Select>
             </div>
             </NumberInput>
-            <p className='text-right text-sm text-gray-700'>Balance: </p>
+            <p className='text-right text-sm text-gray-700'>Balance: {balance}</p>
 
             <Button label={token.isNative? "Wrap" : "Approve"} className='w-full' onClick={wrap} isLoading={isWrapping} />
         </>

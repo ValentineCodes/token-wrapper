@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { useSwitchNetwork, useChainId, useAccount, useSigner, erc20ABI } from 'wagmi'
 import Button from '../../Button'
 import { useDeployedContractInfo } from '~~/hooks/scaffold-eth'
@@ -40,11 +40,12 @@ function UnwrapForm({}: Props) {
     const chainId = useChainId()
     const {switchNetwork} = useSwitchNetwork()
     const {data: signer, isLoading: isLoadingSigner} = useSigner()
-    const {address, isConnected} = useAccount()
+    const {address: account, isConnected} = useAccount()
 
     const [network, setNetwork] = useState(NETWORKS[0])
     const [token, setToken] = useState(TOKENS[0])
     const [isUnwrapping, setIsUnwrapping] = useState(false)
+    const [balance, setBalance] = useState("")
 
     const {data: ethClone, isLoading: isLoadingETHClone} = useDeployedContractInfo("ETHClone")
     const {data: erc20TokenClone, isLoading: isLoadingERC20TokenClone} = useDeployedContractInfo("ERC20TokenClone")
@@ -79,34 +80,42 @@ function UnwrapForm({}: Props) {
         setIsUnwrapping(true)
         let notificationId
         const amount = ethers.utils.parseEther(token.amount.toString())
+        let contract
         if(token.isNative) {
-            try {
-                notificationId = notification.loading(`Unwrapping ${token.amount} ${token.name}`)
-                const ethCloneContract = new ethers.Contract(token.cloneContract, ethClone?.abi, signer)
+            contract = new ethers.Contract(token.cloneContract, ethClone?.abi, signer)
 
-                const withdrawTx = await ethCloneContract.withdraw(amount)
-                await withdrawTx.wait(1)
-                
-                notification.success("Unwrapped!")
-            } catch(error) {
-                notification.error(JSON.stringify(error))
-            }
         } else {
-            try {
-                notificationId = notification.loading(`Unwrapping ${token.amount} ${token.name}`)
-                const tokenCloneContract = new ethers.Contract(token.cloneContract, erc20TokenClone?.abi, signer)
-
-                const withdrawTx = await tokenCloneContract.withdraw(amount)
-                await withdrawTx.wait(1)
-                
-                notification.success("Unwrapped!")
-            } catch(error) {
-                notification.error(JSON.stringify(error))
-            }
+            contract = new ethers.Contract(token.cloneContract, erc20TokenClone?.abi, signer)
         }
-        notification.remove(notificationId)
-        setIsUnwrapping(false)
+        try {
+            notificationId = notification.loading(`Unwrapping ${token.amount} ${token.name}`)
+
+            const withdrawTx = await contract.withdraw(amount)
+            await withdrawTx.wait(1)
+            
+            notification.success("Unwrapped!")
+        } catch(error) {
+            notification.error(JSON.stringify(error))
+        } finally {
+            notification.remove(notificationId)
+            setIsUnwrapping(false)
+        }
     }
+
+    useEffect(() => {
+        (async () => {
+            if(isLoadingSigner || !isConnected) return
+            try {
+                const _token = new ethers.Contract(token.cloneContract, erc20ABI, signer)
+                const balance = await _token.balanceOf(account)
+                setBalance(Number(ethers.utils.formatEther(balance)).toFixed(4))
+            } catch(error) {
+                console.log(`Error reading balance of ${token.name}`)
+                console.error(error)
+                return
+            }
+        })()
+    }, [token, account, isUnwrapping])
     return (
         <>
             {/* Select Network */}
@@ -129,7 +138,7 @@ function UnwrapForm({}: Props) {
                 </Select>
             </div>
             </NumberInput>
-            <p className='text-right text-sm text-gray-700'>Balance: </p>
+            <p className='text-right text-sm text-gray-700'>Balance: {balance}</p>
 
             <Button label="Unwrap" className='w-full' onClick={unwrap} isLoading={isUnwrapping} />
         </>
