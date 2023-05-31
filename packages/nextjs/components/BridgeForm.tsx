@@ -1,11 +1,13 @@
 import React, {useState, useEffect} from 'react'
-import { useSwitchNetwork, useChainId, useAccount } from 'wagmi'
+import { useSwitchNetwork, useChainId, useAccount, useSigner } from 'wagmi'
 import { ArrowPathIcon } from '@heroicons/react/24/solid'
 import SelectNetwork from './SelectNetwork'
 import InputTokenAmountForm from './InputTokenAmountForm'
 import Button from './Button'
 import { Select } from '@chakra-ui/react'
 import { useAccountBalance } from '~~/hooks/scaffold-eth'
+import { ethers } from 'ethers'
+import { notification } from '~~/utils/scaffold-eth'
 
 const ETHEREUM_NETWORKS = [{
   name: "Sepolia",
@@ -16,22 +18,65 @@ const POLYGON_NETWORKS = [{
   chainId: 80001
 }]
 
-const SEPOLIA_TOKENS = ["ETH"]
-const MUMBAI_TOKENS = ["MATIC"]
-const SEPOLIA_TOKENS_CLONES = ["ETHc"]
-const MUMBAI_TOKENS_CLONES = ["MATICc"]
+export interface BridgeVault {
+  name: string;
+  address: string;
+}
+interface TokenClone {
+  name: string;
+  address: string;
+}
+
+const SEPOLIA_VAULTS = [{name: "ETH", address: ""}]
+const MUMBAI_VAULTS = [{name: "MATIC", address: "0xeF20ad6245cf8E854de8952BbB04bf8594914AAf"}]
+const SEPOLIA_TOKENS_CLONES = [{name: "ETHc", address: ""}]
+const MUMBAI_TOKENS_CLONES = [{name: "MATICc", address: ""}]
 
 type Props = {}
 function BridgeForm({}: Props) {
   const [isNetworkSwitched, setIsNetworkSwitched] = useState(false)
-  const {switchNetwork} = useSwitchNetwork()
-  const {address: account} = useAccount()
-  const {balance} = useAccountBalance(account)
-  const chainId = useChainId()
   const [networkChainId, setNetworkChainId] = useState({layer1: ETHEREUM_NETWORKS[0].chainId, layer2: POLYGON_NETWORKS[0].chainId})
   const [selectedChainId, setSelectedChainId] = useState(ETHEREUM_NETWORKS[0].chainId)
-  const [depositAmount, setDepositAmount] = useState(0)
-  const [receivedTokens, setReceivedTokens] = useState<string[] | null>(null)
+  const [token, setToken] = useState({vault: "", amount: 0})
+  const [receivedTokens, setReceivedTokens] = useState<TokenClone[] | null>(null)
+  const {switchNetwork} = useSwitchNetwork()
+  const {address: account} = useAccount()
+  const {balance, isLoading: isLoadingBalance} = useAccountBalance(account)
+  const chainId = useChainId()
+  const {data: signer, isLoading: isLoadingSigner} = useSigner()
+  const [isDepositing, setIsDepositing] = useState(false)
+
+  const deposit = async () => {
+    if(isDepositing) return
+    if(isLoadingSigner || isLoadingBalance) {
+      notification.info("Loading resources...")
+      return
+    }
+    if(token.amount <= 0) {
+      notification.warning("Invalid amount!")
+      return
+    }
+    if(token.amount > balance!) {
+      notification.error("Amount cannot exceed balance!")
+      return
+    }
+
+    let notificationId = notification.loading("Depositing")
+    setIsDepositing(true)
+    try {
+      const tx = await signer?.sendTransaction({
+        to: token.vault,
+        value: ethers.utils.parseEther(String(token.amount))
+      })
+      await tx?.wait(1)
+      notification.success(`Deposited ${token.amount - (token.amount / 100)}`)
+    } catch(error) {
+      notification.error(JSON.stringify(error))
+    } finally{
+      notification.remove(notificationId)
+      setIsDepositing(false)
+    }
+  }
 
   useEffect(() => {
     if(isNetworkSwitched){
@@ -56,7 +101,7 @@ function BridgeForm({}: Props) {
         </div>
         {chainId !== selectedChainId && <Button label="Switch Network" className="w-full" onClick={() => switchNetwork?.(selectedChainId)} />}
 
-        <InputTokenAmountForm label="You send" tokens={isNetworkSwitched? MUMBAI_TOKENS : SEPOLIA_TOKENS} value={String(depositAmount)} onChange={token => setDepositAmount(token.amount)} />
+        <InputTokenAmountForm label="You send" vaults={isNetworkSwitched? MUMBAI_VAULTS : SEPOLIA_VAULTS} value={String(token.amount)} onChange={token => setToken(token)} />
         <div className='flex justify-between items-center text-sm text-gray-700'>
           <p>1% fee</p>
           <p>Balance: {balance?.toFixed(3)}</p>
@@ -65,16 +110,16 @@ function BridgeForm({}: Props) {
         <div className='mt-5'>
           <label className='text-gray-700 text-sm'>You receive</label>
           <div className='flex mt-2'>
-              <input className='w-full border border-gray-300 pl-2' placeholder='Amount' value={depositAmount * 0.99 || ""} disabled />
+              <input className='w-full border border-gray-300 pl-2' placeholder='Amount' value={token.amount - (token.amount / 100) || ""} disabled />
               <div className='w-[180px]'>
-                  <Select defaultValue={receivedTokens?.[0].toLowerCase()} className='w-[50px]'>
-                      {receivedTokens?.map(token =>  <option key={token.toLowerCase()} value={token.toLowerCase()}>{token}</option>)}
+                  <Select defaultValue={receivedTokens?.[0].address.toLowerCase()} className='w-[50px]'>
+                      {receivedTokens?.map(token =>  <option key={token.name} value={token.address}>{token.name}</option>)}
                   </Select>
               </div>
           </div>
         </div>
 
-        <Button label="Deposit" onClick={() => true} />
+        <Button label="Deposit" onClick={deposit} isLoading={isDepositing} />
       </>
   )
 }
