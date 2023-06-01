@@ -51,6 +51,7 @@ function UnwrapForm({}: Props) {
     const [token, setToken] = useState(TOKENS[0])
     const [isUnwrapping, setIsUnwrapping] = useState(false)
     const [balance, setBalance] = useState("")
+    const [isLoadingBalanceSuccessful, setIsLoadingBalanceSuccessful] = useState(false)
 
     const {data: ethClone, isLoading: isLoadingETHClone} = useDeployedContractInfo("ETHClone")
     const {data: erc20TokenClone, isLoading: isLoadingERC20TokenClone} = useDeployedContractInfo("ERC20TokenClone")
@@ -81,6 +82,10 @@ function UnwrapForm({}: Props) {
             notification.warning("Invalid amount!")
             return
         }
+        if(isLoadingBalanceSuccessful && token.amount > Number(balance)) {
+            notification.error("Amount exceeds balance")
+            return
+        }
 
         setIsUnwrapping(true)
         let notificationId
@@ -107,19 +112,23 @@ function UnwrapForm({}: Props) {
         }
     }
 
+    const readBalance = async () => {
+        if(isLoadingSigner || !isConnected) return
+        try {
+            const _token = new ethers.Contract(token.cloneContract, erc20ABI, signer)
+            const balance = await _token.balanceOf(account)
+            setBalance(ethers.utils.formatEther(balance))
+            setIsLoadingBalanceSuccessful(true)
+        } catch(error) {
+            console.log(`Error reading balance of ${token.name}`)
+            console.error(error)
+            setIsLoadingBalanceSuccessful(false)
+            return
+        }
+    }
+
     useEffect(() => {
-        (async () => {
-            if(isLoadingSigner || !isConnected) return
-            try {
-                const _token = new ethers.Contract(token.cloneContract, erc20ABI, signer)
-                const balance = await _token.balanceOf(account)
-                setBalance(ethers.utils.formatEther(balance))
-            } catch(error) {
-                console.log(`Error reading balance of ${token.name}`)
-                console.error(error)
-                return
-            }
-        })()
+        readBalance()
     }, [token, account, isUnwrapping, isLoadingSigner])
     return (
         <>

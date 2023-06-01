@@ -38,40 +38,40 @@ function WithdrawForm({}: Props) {
   const [token, setToken] = useState({address: "", amount: 0})
   const [isWithdrawing, setIsWithdrawing] = useState(false)
   const [tokens, setTokens] = useState<TokenClone[] | undefined>()
-  // const {data: bridgeTokenClone, isLoading: isLoadingBridgeTokenClone} = useDeployedContractInfo("BridgeTokenClone")
+  const {data: bridgeTokenClone, isLoading: isLoadingBridgeTokenClone} = useDeployedContractInfo("BridgeTokenClone")
 
   const withdraw = async () => {
-  //  if(isWithdrawing) return
-  //  if(isLoadingSigner || isLoadingBridgeTokenClone) {
-  //     notification.info("Loading resources...")
-  //     return
-  //   }
-  //   if(token.amount <= 0) {
-  //     notification.warning("Invalid amount!")
-  //     return
-  //   }
-  //   // if(token.amount > balance!) {
-  //   //   notification.error("Amount cannot exceed balance!")
-  //   //   return
-  //   // }
+   if(isWithdrawing) return
+   if(isLoadingSigner || isLoadingBridgeTokenClone) {
+      notification.info("Loading resources...")
+      return
+    }
+    if(token.amount <= 0) {
+      notification.warning("Invalid amount!")
+      return
+    }
+    // if(token.amount > balance!) {
+    //   notification.error("Amount cannot exceed balance!")
+    //   return
+    // }
 
-  //   let notificationId = notification.loading("Depositing")
-  //   setIsWithdrawing(true)
+    let notificationId = notification.loading("Depositing")
+    setIsWithdrawing(true)
 
-  //   try{
-  //     const tokenClone = new ethers.Contract(token.address, bridgeTokenClone?.abi as any, signer)
+    try{
+      const tokenClone = new ethers.Contract(token.address, bridgeTokenClone?.abi as any, signer)
 
-  //     const burnTx = await tokenClone.burn(ethers.utils.parseEther(token.amount.toString()))
-  //     await burnTx.wait(1)
+      const burnTx = await tokenClone.burn(ethers.utils.parseEther(token.amount.toString()))
+      await burnTx.wait(1)
 
-  //     notification.success("Successful Withdrawal")
-  //   } catch(error) {
-  //     console.error(error)
-  //     notification.error(JSON.stringify(error))
-  //   } finally {
-  //     notification.remove(notificationId)
-  //     setIsWithdrawing(false)
-  //   }
+      notification.success("Successful Withdrawal")
+    } catch(error) {
+      console.error(error)
+      notification.error(JSON.stringify(error))
+    } finally {
+      notification.remove(notificationId)
+      setIsWithdrawing(false)
+    }
     
   }
 
