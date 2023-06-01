@@ -32,8 +32,7 @@ function UnwrapForm({}: Props) {
         return chainId !== network.chainId
     }
 
-    const handleNetworkChange = (e: any) => {
-        const chainId = Number(e.target.value)
+    const handleNetworkChange = (chainId: number) => {
         const network = supportNetworks.find(network => network.chainId === chainId)
         setNetwork(network!)
     }
@@ -104,6 +103,12 @@ function UnwrapForm({}: Props) {
         }
     }, [network])
 
+    useEffect(() => {
+        if(chainId !== network.chainId) {
+            handleNetworkChange(chainId)
+        }
+    }, [chainId])
+
     const readBalance = async () => {
         if(isLoadingSigner || !isConnected || isNetworkSwitched()) return
         try {
@@ -128,7 +133,7 @@ function UnwrapForm({}: Props) {
                 <img src={network.img.url} alt={network.img.alt} className='w-16 h-16' />
                 </div>
 
-                <Select onChange={handleNetworkChange}>
+                <Select onChange={e => handleNetworkChange(Number(e.target.value))} value={network.chainId}>
                     {supportNetworks.map(network =>  <option key={network.chainId} value={network.chainId}>{network.name}</option>)}
                 </Select>
             </div>
