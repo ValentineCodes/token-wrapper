@@ -20,6 +20,7 @@ function UnwrapForm({}: Props) {
     const {address: account, isConnected} = useAccount()
 
     const [network, setNetwork] = useState(supportNetworks[0])
+    const [networkTokenClones, setNetworkTokenClones] = useState(supportNetworks[0].tokens)
     const [token, setToken] = useState(supportNetworks[0].tokens[0])
     const [isUnwrapping, setIsUnwrapping] = useState(false)
     const [balance, setBalance] = useState("")
@@ -27,6 +28,10 @@ function UnwrapForm({}: Props) {
 
     const {data: ethClone, isLoading: isLoadingETHClone} = useDeployedContractInfo("ETHClone")
     const {data: erc20TokenClone, isLoading: isLoadingERC20TokenClone} = useDeployedContractInfo("ERC20TokenClone")
+
+    const isNetworkSwitched = () => {
+        return chainId !== network.chainId
+    }
 
     const handleNetworkChange = (e: any) => {
         const chainId = Number(e.target.value)
@@ -39,6 +44,14 @@ function UnwrapForm({}: Props) {
         const selectedNetwork = supportNetworks.find(_network => _network.chainId === network.chainId)
         const token = selectedNetwork?.tokens.find(token => token.clone === clone)
         setToken(_token => ({...token!, amount: _token.amount}))
+    }
+
+    const handleNetworkSwitch = () => {
+        if(isConnected) {
+            switchNetwork?.(network.chainId)
+        } else {
+            notification.info("Connect Wallet!")
+        }
     }
 
     const unwrap = async () => {
@@ -87,10 +100,13 @@ function UnwrapForm({}: Props) {
 
     useEffect(() => {
         setToken(network.tokenClones[0])
+        if(!isNetworkSwitched()) {
+            setNetworkTokenClones(network.tokenClones)
+        }
     }, [network])
 
     const readBalance = async () => {
-        if(isLoadingSigner || !isConnected) return
+        if(isLoadingSigner || !isConnected || isNetworkSwitched()) return
         try {
             setIsLoadingBalanceSuccessful(false)
             const _token = new ethers.Contract(token.clone, erc20ABI, signer)
@@ -117,13 +133,13 @@ function UnwrapForm({}: Props) {
                     {supportNetworks.map(network =>  <option key={network.chainId} value={network.chainId}>{network.name}</option>)}
                 </Select>
             </div>
-            {chainId !== network.chainId && <Button outline label="Switch Network" className="w-full" onClick={() => switchNetwork?.(network.chainId)} />}
+            {isNetworkSwitched() && <Button outline label="Switch Network" className="w-full" onClick={handleNetworkSwitch} />}
 
             <NumberInput className='flex mt-7'>
             <NumberInputField className='w-full border border-gray-300 pl-2' placeholder='Amount' value={token.amount || ""} onChange={e => setToken(token => ({...token, amount: Number(e.target.value)}))} />
             <div className='w-[180px]'>
-                <Select defaultValue={network.tokenClones?.[0].name} className='w-[50px]' onChange={handleTokenChange}>
-                    {network.tokenClones?.map(token =>  <option key={token.clone} value={token.clone}>{token.name}</option>)}
+                <Select defaultValue={networkTokenClones?.[0].name} className='w-[50px]' onChange={handleTokenChange}>
+                    {networkTokenClones?.map(token =>  <option key={token.clone} value={token.clone}>{token.name}</option>)}
                 </Select>
             </div>
             </NumberInput>
