@@ -115,6 +115,7 @@ function UnwrapForm({}: Props) {
     const readBalance = async () => {
         if(isLoadingSigner || !isConnected) return
         try {
+            setIsLoadingBalanceSuccessful(false)
             const _token = new ethers.Contract(token.cloneContract, erc20ABI, signer)
             const balance = await _token.balanceOf(account)
             setBalance(ethers.utils.formatEther(balance))
@@ -122,8 +123,6 @@ function UnwrapForm({}: Props) {
         } catch(error) {
             console.log(`Error reading balance of ${token.name}`)
             console.error(error)
-            setIsLoadingBalanceSuccessful(false)
-            return
         }
     }
 
@@ -132,7 +131,6 @@ function UnwrapForm({}: Props) {
     }, [token, account, isUnwrapping, isLoadingSigner])
     return (
         <>
-            {/* Select Network */}
             <div className='flex flex-col items-center space-y-10 w-60 mx-auto' aria-label='network'>
                 <div className='flex justify-center item-center shadow-[0_0_5px_3px_#624DE3] p-2 rounded-3xl'>
                 <img src={network.img.url} alt={network.img.alt} className='w-16 h-16' />
@@ -152,7 +150,7 @@ function UnwrapForm({}: Props) {
                 </Select>
             </div>
             </NumberInput>
-            <p className='text-right text-sm text-gray-700'>Balance: {Number(balance).toFixed(4)}</p>
+            <p className={`text-right text-sm text-gray-700 ${!isConnected || !isLoadingBalanceSuccessful? 'invisible': ''}`}>Balance: {Number(balance).toFixed(4)}</p>
 
             <Button label="Unwrap" className='w-full' onClick={unwrap} isLoading={isUnwrapping} />
         </>
