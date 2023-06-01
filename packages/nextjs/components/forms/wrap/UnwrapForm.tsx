@@ -14,8 +14,16 @@ type Props = {}
 function UnwrapForm({}: Props) {
     const chainId = useChainId()
     const {switchNetwork} = useSwitchNetwork({
+        onMutate: () => {
+            notification.info(`Switching to ${network.name}`)
+        },
         onSuccess: () => {
+            notification.success("Network switched")
             Router.reload()
+        },
+        onError: (error) => {
+            notification.error("Failed to switch network")
+            notification.error(JSON.stringify(error))
         }
     })
     const {data: signer, isLoading: isLoadingSigner} = useSigner()

@@ -12,11 +12,6 @@ import bgTokenABI from "~~/resources/abi/bgTokenABI.json"
 type Props = {}
 function WrapForm({}: Props) {
     const chainId = useChainId()
-    const {switchNetwork} = useSwitchNetwork({
-        onSuccess: () => {
-            Router.reload()
-        }
-    })
     const provider = useProvider()
     const {data: signer, isLoading: isLoadingSigner} = useSigner()
     const {address: account, isConnected} = useAccount()
@@ -29,6 +24,19 @@ function WrapForm({}: Props) {
     const [isLoadingBalanceSuccessful, setIsLoadingBalanceSuccessful] = useState(false)
     const [metamaskToken, setMetamaskToken] = useState<any>()
     const [isMintingBG, setIsMintingBG] = useState(false)
+    const {switchNetwork} = useSwitchNetwork({
+        onMutate: () => {
+            notification.info(`Switching to ${network.name}`)
+        },
+        onSuccess: () => {
+            notification.success("Network switched")
+            Router.reload()
+        },
+        onError: (error) => {
+            notification.error("Failed to switch network")
+            notification.error(JSON.stringify(error))
+        }
+    })
 
     const isNetworkSwitched = () => {
         return chainId !== network.chainId
@@ -216,7 +224,7 @@ function WrapForm({}: Props) {
     }, [network])
 
     useEffect(() => {
-        if(chainId !== network.chainId) {
+        if(isNetworkSwitched()) {
             handleNetworkChange(chainId)
         }
     }, [chainId])
