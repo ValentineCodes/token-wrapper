@@ -149,7 +149,7 @@ function UnwrapForm({}: Props) {
 
             <NumberInput className='flex mt-7'>
                 <NumberInputField className='w-full border border-gray-300 pl-2' placeholder='Amount' value={token.amount || ""} onChange={e => setToken(token => ({...token, amount: Number(e.target.value)}))} />
-                <select defaultValue={networkTokenClones?.[0].name} className='min-w-[120px] border border-[#CBD5E0] rounded-md px-2' onChange={handleTokenChange}>
+                <select defaultValue={networkTokenClones?.[0].name} className='min-w-[120px] border border-[#CBD5E0] rounded-md px-2 bg-white' onChange={handleTokenChange}>
                     {networkTokenClones?.map(token =>  <option key={token.clone} value={token.clone}>{token.name}</option>)}
                 </select>
             </NumberInput>

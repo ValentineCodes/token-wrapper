@@ -275,7 +275,7 @@ function WrapForm({}: Props) {
 
             <NumberInput className='flex mt-7'>
                 <NumberInputField className='w-full border border-gray-300 pl-2' placeholder='Amount' value={token.amount || ""} onChange={e => setToken(token => ({...token, amount: Number(e.target.value)}))} />
-                <select defaultValue={networkTokens?.[0].name} className='min-w-[120px] border border-[#CBD5E0] rounded-md px-2' onChange={handleTokenChange}>
+                <select defaultValue={networkTokens?.[0].name} className='min-w-[120px] border border-[#CBD5E0] rounded-md px-2 bg-white' onChange={handleTokenChange}>
                     {networkTokens?.map(token =>  <option key={token.clone} value={token.clone}>{token.name}</option>)}
                 </select>
             </NumberInput>
