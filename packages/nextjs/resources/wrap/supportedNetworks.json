@@ -13,6 +13,13 @@
                 "address": "",
                 "clone": "0x5820Ab62f9FC37c7dAfDE0160DE893Fa9B2bB350",
                 "amount": 0
+            },
+            {
+                "name": "BG",
+                "isNative": false,
+                "address": "0x4062726a93890e446a51Fa562bd894fF25955Cb8",
+                "clone": "0xBF5697Acd4EF3eEAC8De6aC68DB8cE0C6F79c25f",
+                "amount": 0
             }
         ],
         "tokenClones": [
@@ -21,6 +28,13 @@
                 "isNative": true,
                 "address": "",
                 "clone": "0x5820Ab62f9FC37c7dAfDE0160DE893Fa9B2bB350",
+                "amount": 0
+            },
+            {
+                "name": "BGc",
+                "isNative": false,
+                "address": "0x4062726a93890e446a51Fa562bd894fF25955Cb8",
+                "clone": "0xBF5697Acd4EF3eEAC8De6aC68DB8cE0C6F79c25f",
                 "amount": 0
             }
         ]
@@ -39,6 +53,13 @@
                 "address": "",
                 "clone": "0x9EDafD67B89B5D06A2Ee9f19130AAc7Ab3A7F90F",
                 "amount": 0
+            },
+            {
+                "name": "BG",
+                "isNative": false,
+                "address": "0xFd15568Cfad659e0189F636C18B84625E862b4Bf",
+                "clone": "0x4752bA8062c03C6048ef4473132b71b39c68514F",
+                "amount": 0
             }
         ],
         "tokenClones": [
@@ -47,6 +68,13 @@
                 "isNative": true,
                 "address": "",
                 "clone": "0x9EDafD67B89B5D06A2Ee9f19130AAc7Ab3A7F90F",
+                "amount": 0
+            },
+            {
+                "name": "BGc",
+                "isNative": false,
+                "address": "0xFd15568Cfad659e0189F636C18B84625E862b4Bf",
+                "clone": "0x4752bA8062c03C6048ef4473132b71b39c68514F",
                 "amount": 0
             }
         ]

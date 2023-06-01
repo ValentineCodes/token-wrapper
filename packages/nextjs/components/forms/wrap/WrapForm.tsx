@@ -2,11 +2,11 @@ import React, {useEffect, useState} from 'react'
 import Router from 'next/router'
 import { useSwitchNetwork, useChainId, useAccount, useProvider, useSigner, erc20ABI } from 'wagmi'
 import Button from '../../Button'
-import { useDeployedContractInfo } from '~~/hooks/scaffold-eth'
 import { NumberInput, NumberInputField, Select } from '@chakra-ui/react'
 import { notification } from '~~/utils/scaffold-eth'
 import { BigNumber, ethers } from 'ethers'
 import supportNetworks from "~~/resources/wrap/supportedNetworks.json"
+import erc20TokenCloneABI from "~~/resources/abi/erc20TokenCloneABI.json"
 
 type Props = {}
 function WrapForm({}: Props) {
@@ -27,8 +27,6 @@ function WrapForm({}: Props) {
     const [balance, setBalance] = useState("")
     const [isLoadingBalanceSuccessful, setIsLoadingBalanceSuccessful] = useState(false)
     const [wrappedToken, setWrappedToken] = useState<any>()
-
-    const {data: erc20TokenClone, isLoading: isLoadingERC20TokenClone} = useDeployedContractInfo("ERC20TokenClone")
 
     const isNetworkSwitched = () => {
         return chainId !== network.chainId
@@ -60,7 +58,7 @@ function WrapForm({}: Props) {
             notification.info("Connect Wallet")
             return
         }
-        if(isLoadingSigner || isLoadingERC20TokenClone) {
+        if(isLoadingSigner) {
             notification.info("Loading resources...")
             return
         }
@@ -104,13 +102,16 @@ function WrapForm({}: Props) {
             }
         } else {
             try {
+                
                 const _token = new ethers.Contract(token.address, erc20ABI, signer)
 
                 // check allowance
                 const owner = await signer?.getAddress()
+                console.log(1)
                 const allowance: BigNumber = await _token.allowance(owner, token.clone)
                 if(allowance.lt(amount)) {
                     // approve token clone to spend amount
+                    console.log(2)
                     notificationId = notification.loading(`Approving ${token.amount} ${token.name}`)
                     const approveTx = await _token.approve(token.clone, amount)
                     await approveTx.wait(1)
@@ -119,10 +120,15 @@ function WrapForm({}: Props) {
                 }
     
                 // wrap token
+                console.log(3)
                 notificationId = notification.loading(`Wrapping ${token.amount} ${token.name}`)
-                const tokenCloneContract = new ethers.Contract(token.clone, erc20TokenClone?.abi, signer)
+                console.log(4)
+                console.log(bgClone)
+                console.log(signer)
+                const tokenCloneContract = new ethers.Contract(token.clone, erc20TokenCloneABI, signer)
                 const depositTx = await tokenCloneContract.deposit(amount)
                 await depositTx.wait(1)
+                console.log(5)
                 
                 notification.success("That's a wrap!")
                 const [symbol, decimals] = await Promise.all([
@@ -132,6 +138,7 @@ function WrapForm({}: Props) {
                 setWrappedToken({contract: token.clone, symbol, decimals})
             } catch(error) {
                 notification.error(JSON.stringify(error))
+                console.error(error)
             }
         }
         notification.remove(notificationId)

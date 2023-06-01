@@ -7,6 +7,7 @@ import { NumberInput, NumberInputField, Select } from '@chakra-ui/react'
 import { notification } from '~~/utils/scaffold-eth'
 import { ethers } from 'ethers'
 import supportNetworks from "~~/resources/wrap/supportedNetworks.json"
+import erc20TokenCloneABI from "~~/resources/abi/erc20TokenCloneABI.json"
 
 type Props = {}
 function UnwrapForm({}: Props) {
@@ -25,9 +26,7 @@ function UnwrapForm({}: Props) {
     const [isUnwrapping, setIsUnwrapping] = useState(false)
     const [balance, setBalance] = useState("")
     const [isLoadingBalanceSuccessful, setIsLoadingBalanceSuccessful] = useState(false)
-
     const {data: ethClone, isLoading: isLoadingETHClone} = useDeployedContractInfo("ETHClone")
-    const {data: erc20TokenClone, isLoading: isLoadingERC20TokenClone} = useDeployedContractInfo("ERC20TokenClone")
 
     const isNetworkSwitched = () => {
         return chainId !== network.chainId
@@ -60,7 +59,7 @@ function UnwrapForm({}: Props) {
             notification.info("Connect Wallet")
             return
         }
-        if(isLoadingSigner || isLoadingETHClone || isLoadingERC20TokenClone) {
+        if(isLoadingSigner || isLoadingETHClone) {
             notification.info("Loading resources...")
             return
         }
@@ -81,7 +80,7 @@ function UnwrapForm({}: Props) {
             contract = new ethers.Contract(token.clone, ethClone?.abi, signer)
 
         } else {
-            contract = new ethers.Contract(token.clone, erc20TokenClone?.abi, signer)
+            contract = new ethers.Contract(token.clone, erc20TokenCloneABI, signer)
         }
         try {
             notificationId = notification.loading(`Unwrapping ${token.amount} ${token.name}`)
