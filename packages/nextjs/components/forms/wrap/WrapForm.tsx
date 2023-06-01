@@ -6,6 +6,7 @@ import { useDeployedContractInfo } from '~~/hooks/scaffold-eth'
 import { NumberInput, NumberInputField, Select } from '@chakra-ui/react'
 import { notification } from '~~/utils/scaffold-eth'
 import { ethers } from 'ethers'
+import supportNetworks from "~~/resources/wrap/supportedNetworks.json"
 
 const NETWORKS = [
     {
@@ -23,7 +24,7 @@ interface Token {
     name: string;
     isNative: boolean;
     address: string;
-    cloneContract: string;
+    clone: string;
     amount: number;
 }
 
@@ -32,14 +33,14 @@ const TOKENS: Token[] = [
         name: "ETH",
         isNative: true,
         address: "",
-        cloneContract: "0xaFe79D30940218584ec95dFF49cCBB03aa8B3682",
+        clone: "0xaFe79D30940218584ec95dFF49cCBB03aa8B3682",
         amount: 0
     },
     {
         name: "MATICc",
         isNative: false,
         address: "0x10b9980C12DDC8B6b1d06C1d50B64f7d400CA0FD",
-        cloneContract: "0xAb47256134F7653a3E7E5a5533732bD3B1AD6668",
+        clone: "0xAb47256134F7653a3E7E5a5533732bD3B1AD6668",
         amount: 0
     }
 ]
@@ -56,8 +57,8 @@ function WrapForm({}: Props) {
     const {data: signer, isLoading: isLoadingSigner} = useSigner()
     const {address: account, isConnected} = useAccount()
 
-    const [network, setNetwork] = useState(NETWORKS[0])
-    const [token, setToken] = useState(TOKENS[0])
+    const [network, setNetwork] = useState(supportNetworks[0])
+    const [token, setToken] = useState(supportNetworks[0].tokens[0])
     const [isWrapping, setIsWrapping] = useState(false)
     const [balance, setBalance] = useState("")
     const [isLoadingBalanceSuccessful, setIsLoadingBalanceSuccessful] = useState(false)
@@ -67,13 +68,14 @@ function WrapForm({}: Props) {
 
     const handleNetworkChange = (e: any) => {
         const chainId = Number(e.target.value)
-        const network = NETWORKS.find(network => network.chainId === chainId)
+        const network = supportNetworks.find(network => network.chainId === chainId)
         setNetwork(network!)
     }
 
     const handleTokenChange = (e: any) => {
-        const cloneContract = e.target.value
-        const token = TOKENS.find(network => network.cloneContract === cloneContract)
+        const clone = e.target.value
+        const selectedNetwork = supportNetworks.find(_network => _network.chainId === network.chainId)
+        const token = selectedNetwork?.tokens.find(token => token.clone === clone)
         setToken(_token => ({...token!, amount: _token.amount}))
     }
 
@@ -103,19 +105,19 @@ function WrapForm({}: Props) {
             notificationId = notification.loading(`Wrapping ${token.amount} ${token.name}`)
             try {
                 const tx = await signer?.sendTransaction({
-                    to: token.cloneContract,
+                    to: token.clone,
                     value: amount
                 })
                 await tx?.wait(1)
 
                 // get wrapped token clone params to add to metamask
                 try {
-                    const contract = new ethers.Contract(token.cloneContract, erc20ABI, provider)
+                    const contract = new ethers.Contract(token.clone, erc20ABI, provider)
                     const [symbol, decimals] = await Promise.all([
                         contract.symbol(),
                         contract.decimals()
                     ])    
-                    setWrappedToken({contract: token.cloneContract, symbol, decimals})
+                    setWrappedToken({contract: token.clone, symbol, decimals})
                 } catch(error) {
                     console.log("failed to get token clone params")
                     console.error(error)
@@ -130,13 +132,13 @@ function WrapForm({}: Props) {
                 const _token = new ethers.Contract(token.address, erc20ABI, signer)
 
                 notificationId = notification.loading(`Approving ${token.amount} ${token.name}`)
-                const approveTx = await _token.approve(token.cloneContract, amount)
+                const approveTx = await _token.approve(token.clone, amount)
                 await approveTx.wait(1)
                 notification.remove(notificationId)
                 notification.success("Approved!")
     
                 notificationId = notification.loading(`Wrapping ${token.amount} ${token.name}`)
-                const tokenCloneContract = new ethers.Contract(token.cloneContract, erc20TokenClone?.abi, signer)
+                const tokenCloneContract = new ethers.Contract(token.clone, erc20TokenClone?.abi, signer)
                 const depositTx = await tokenCloneContract.deposit(amount)
                 await depositTx.wait(1)
                 
@@ -145,7 +147,7 @@ function WrapForm({}: Props) {
                     tokenCloneContract.symbol(),
                     tokenCloneContract.decimals()
                 ])    
-                setWrappedToken({contract: token.cloneContract, symbol, decimals})
+                setWrappedToken({contract: token.clone, symbol, decimals})
             } catch(error) {
                 notification.error(JSON.stringify(error))
             }
@@ -202,7 +204,7 @@ function WrapForm({}: Props) {
 
     useEffect(() => {
         readBalance()
-    }, [token, account, isWrapping, isLoadingSigner])
+    }, [token.name, account, isWrapping, isLoadingSigner])
 
     return (
         <>
@@ -221,7 +223,7 @@ function WrapForm({}: Props) {
             <NumberInputField className='w-full border border-gray-300 pl-2' placeholder='Amount' value={token.amount || ""} onChange={e => setToken(token => ({...token, amount: Number(e.target.value)}))} />
             <div className='w-[180px]'>
                 <Select defaultValue={TOKENS?.[0].name} className='w-[50px]' onChange={handleTokenChange}>
-                    {TOKENS?.map(token =>  <option key={token.cloneContract} value={token.cloneContract}>{token.name}</option>)}
+                    {TOKENS?.map(token =>  <option key={token.clone} value={token.clone}>{token.name}</option>)}
                 </Select>
             </div>
             </NumberInput>

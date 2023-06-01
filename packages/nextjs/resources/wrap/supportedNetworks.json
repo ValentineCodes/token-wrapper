@@ -1,0 +1,43 @@
+[
+    {
+        "name": "Sepolia",
+        "chainId": 11155111, 
+        "img": {
+            "url": "/images/eth-icon.png", 
+            "alt": "ethereum"
+        },
+        "tokens": [
+            {
+                "name": "ETH",
+                "isNative": true,
+                "address": "",
+                "clone": "0xaFe79D30940218584ec95dFF49cCBB03aa8B3682",
+                "amount": 0
+            },
+            {
+                "name": "MATICc",
+                "isNative": false,
+                "address": "0x10b9980C12DDC8B6b1d06C1d50B64f7d400CA0FD",
+                "clone": "0xAb47256134F7653a3E7E5a5533732bD3B1AD6668",
+                "amount": 0
+            }
+        ]
+    },
+    {
+        "name": "Mumbai",
+        "chainId": 80001,
+        "img": {
+            "url": "/images/polygon-icon.png", 
+            "alt": "polygon"
+        },
+        "tokens": [
+            {
+                "name": "MATIC",
+                "isNative": true,
+                "address": "",
+                "clone": "0xaFe79D30940218584ec95dFF49cCBB03aa8B3682",
+                "amount": 0
+            }
+        ]
+    }
+]
