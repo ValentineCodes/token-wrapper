@@ -198,7 +198,15 @@ function WrapForm({}: Props) {
     }
 
     const addTokenToMetamask = async () => {
-        if(!window.ethereum || !metamaskToken) return
+        if(!metamaskToken) return
+        if(!isConnected) {
+            notification.info("Connect Wallet")
+            return
+        }
+        if(!window.ethereum) {
+            notification.info("Can't detect provider! Be sure to use the Metamask browser")
+            return
+        }
         try {
             const isAdded = await window.ethereum.request({
                 method: "wallet_watchAsset",
