@@ -3,7 +3,7 @@ pragma solidity ^0.8.18;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-interface IETHClone is IERC20 {
+interface INativeTokenClone is IERC20 {
   /**
    *
    * @notice Receives ETH deposit and mints it's equivalent in ETHClone

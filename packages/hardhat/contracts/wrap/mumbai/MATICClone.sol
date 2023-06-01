@@ -4,17 +4,17 @@ pragma solidity ^0.8.18;
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-import {IETHClone} from "./interfaces/IETHClone.sol";
+import {INativeTokenClone} from "../../interfaces/INativeTokenClone.sol";
 
-error ETHClone__TransferFailed();
+error MATICClone__TransferFailed();
 
 /**
- * @title ETH Cloner
+ * @title MATIC Cloner
  * @author Valentine Orga
- * @notice Clones ETH
+ * @notice Clones MATIC
  */
-contract ETHClone is IETHClone, ERC20 {
-  constructor() ERC20("ETH Clone", "ETHc") {}
+contract MATICClone is INativeTokenClone, ERC20 {
+  constructor() ERC20("MATIC Clone", "MATICc") {}
 
   function deposit() public payable {
     _mint(msg.sender, msg.value);
@@ -25,7 +25,7 @@ contract ETHClone is IETHClone, ERC20 {
 
     (bool success, ) = msg.sender.call{value: amount}("");
 
-    if (!success) revert ETHClone__TransferFailed();
+    if (!success) revert MATICClone__TransferFailed();
   }
 
   receive() external payable {
