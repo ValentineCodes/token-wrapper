@@ -113,11 +113,9 @@ function WrapForm({}: Props) {
 
                 // check allowance
                 const owner = await signer?.getAddress()
-                console.log(1)
                 const allowance: BigNumber = await _token.allowance(owner, token.clone)
                 if(allowance.lt(amount)) {
                     // approve token clone to spend amount
-                    console.log(2)
                     notificationId = notification.loading(`Approving ${token.amount} ${token.name}`)
                     const approveTx = await _token.approve(token.clone, amount)
                     await approveTx.wait(1)
@@ -126,15 +124,10 @@ function WrapForm({}: Props) {
                 }
     
                 // wrap token
-                console.log(3)
                 notificationId = notification.loading(`Wrapping ${token.amount} ${token.name}`)
-                console.log(4)
-                console.log(bgClone)
-                console.log(signer)
                 const tokenCloneContract = new ethers.Contract(token.clone, erc20TokenCloneABI, signer)
                 const depositTx = await tokenCloneContract.deposit(amount)
                 await depositTx.wait(1)
-                console.log(5)
                 
                 notification.success("That's a wrap!")
                 const [symbol, decimals] = await Promise.all([
