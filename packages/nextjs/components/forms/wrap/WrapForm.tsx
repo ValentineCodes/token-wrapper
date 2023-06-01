@@ -5,7 +5,7 @@ import Button from '../../Button'
 import { useDeployedContractInfo } from '~~/hooks/scaffold-eth'
 import { NumberInput, NumberInputField, Select } from '@chakra-ui/react'
 import { notification } from '~~/utils/scaffold-eth'
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import supportNetworks from "~~/resources/wrap/supportedNetworks.json"
 
 type Props = {}
@@ -94,12 +94,19 @@ function WrapForm({}: Props) {
             try {
                 const _token = new ethers.Contract(token.address, erc20ABI, signer)
 
-                notificationId = notification.loading(`Approving ${token.amount} ${token.name}`)
-                const approveTx = await _token.approve(token.clone, amount)
-                await approveTx.wait(1)
-                notification.remove(notificationId)
-                notification.success("Approved!")
+                // check allowance
+                const owner = await signer?.getAddress()
+                const allowance: BigNumber = await _token.allowance(owner, token.clone)
+                if(allowance.lt(amount)) {
+                    // approve token clone to spend amount
+                    notificationId = notification.loading(`Approving ${token.amount} ${token.name}`)
+                    const approveTx = await _token.approve(token.clone, amount)
+                    await approveTx.wait(1)
+                    notification.remove(notificationId)
+                    notification.success("Approved!")
+                }
     
+                // wrap token
                 notificationId = notification.loading(`Wrapping ${token.amount} ${token.name}`)
                 const tokenCloneContract = new ethers.Contract(token.clone, erc20TokenClone?.abi, signer)
                 const depositTx = await tokenCloneContract.deposit(amount)
@@ -197,7 +204,7 @@ function WrapForm({}: Props) {
             <p className={`text-right text-sm text-gray-700 ${!isConnected || !isLoadingBalanceSuccessful? 'invisible': ''}`}>Balance: {Number(balance).toFixed(4)}</p>
             {wrappedToken? <Button outline label={`Add ${wrappedToken.symbol} to Metamask`} onClick={addTokenToMetamask} /> : null}
 
-            <Button label={token.isNative? "Wrap" : "Approve"} className='w-full' onClick={wrap} isLoading={isWrapping} />
+            <Button label="Wrap" className='w-full' onClick={wrap} isLoading={isWrapping} />
         </>
     )
 }
