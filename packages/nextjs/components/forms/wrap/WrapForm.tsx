@@ -7,6 +7,7 @@ import { notification } from '~~/utils/scaffold-eth'
 import { BigNumber, ethers } from 'ethers'
 import supportNetworks from "~~/resources/wrap/supportedNetworks.json"
 import erc20TokenCloneABI from "~~/resources/abi/erc20TokenCloneABI.json"
+import { useScaffoldContractWrite } from '~~/hooks/scaffold-eth'
 
 type Props = {}
 function WrapForm({}: Props) {
@@ -27,6 +28,11 @@ function WrapForm({}: Props) {
     const [balance, setBalance] = useState("")
     const [isLoadingBalanceSuccessful, setIsLoadingBalanceSuccessful] = useState(false)
     const [wrappedToken, setWrappedToken] = useState<any>()
+    const {writeAsync: mintBG, isLoading: isLoadingBGMint} = useScaffoldContractWrite({
+        contractName: "BuidlGuidl",
+        functionName: "mint",
+        args: [ethers.utils.parseEther("100")]
+    })
 
     const isNetworkSwitched = () => {
         return chainId !== network.chainId
@@ -227,6 +233,7 @@ function WrapForm({}: Props) {
             {wrappedToken? <Button outline label={`Add ${wrappedToken.symbol} to Metamask`} onClick={addTokenToMetamask} /> : null}
 
             <Button label="Wrap" className='w-full' onClick={wrap} isLoading={isWrapping} />
+            <Button outline label="Mint 100 BG" className='w-full' onClick={mintBG} isLoading={isLoadingBGMint} />
         </>
     )
 }

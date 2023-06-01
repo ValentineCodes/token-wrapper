@@ -5,7 +5,7 @@ const contracts = {
       chainId: "80001",
       contracts: {
         BGClone: {
-          address: "0x4752bA8062c03C6048ef4473132b71b39c68514F",
+          address: "0x1B171b7320F95348A8ec08C6C250D15E4e02DCce",
           abi: [
             {
               inputs: [],
@@ -1077,7 +1077,7 @@ const contracts = {
           ],
         },
         BuidlGuidl: {
-          address: "0xFd15568Cfad659e0189F636C18B84625E862b4Bf",
+          address: "0x186B2a618faf5B7528896bEB58C5b1dC17266c59",
           abi: [
             {
               inputs: [],
@@ -1259,6 +1259,19 @@ const contracts = {
                   type: "bool",
                 },
               ],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+              ],
+              name: "mint",
+              outputs: [],
               stateMutability: "nonpayable",
               type: "function",
             },
@@ -1674,7 +1687,7 @@ const contracts = {
       chainId: "11155111",
       contracts: {
         BGClone: {
-          address: "0xBF5697Acd4EF3eEAC8De6aC68DB8cE0C6F79c25f",
+          address: "0x56969a437761dB5199617d707b78C8AE8bD3A2c1",
           abi: [
             {
               inputs: [],
@@ -2746,7 +2759,7 @@ const contracts = {
           ],
         },
         BuidlGuidl: {
-          address: "0x4062726a93890e446a51Fa562bd894fF25955Cb8",
+          address: "0x905Ee3f4D489199E48B73cfcB0a3fAf2c9c56973",
           abi: [
             {
               inputs: [],
@@ -2928,6 +2941,19 @@ const contracts = {
                   type: "bool",
                 },
               ],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+              ],
+              name: "mint",
+              outputs: [],
               stateMutability: "nonpayable",
               type: "function",
             },
