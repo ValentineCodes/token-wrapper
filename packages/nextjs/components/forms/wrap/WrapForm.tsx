@@ -8,43 +8,6 @@ import { notification } from '~~/utils/scaffold-eth'
 import { ethers } from 'ethers'
 import supportNetworks from "~~/resources/wrap/supportedNetworks.json"
 
-const NETWORKS = [
-    {
-        name: "Sepolia",
-        chainId: 11155111, 
-        img: {url: '/images/eth-icon.png', alt: 'ethereum'}},
-    {
-        name: "Mumbai",
-        chainId: 80001,
-        img: {url: '/images/polygon-icon.png', alt: 'polygon'}
-    }
-]
-
-interface Token {
-    name: string;
-    isNative: boolean;
-    address: string;
-    clone: string;
-    amount: number;
-}
-
-const TOKENS: Token[] = [
-    {
-        name: "ETH",
-        isNative: true,
-        address: "",
-        clone: "0xaFe79D30940218584ec95dFF49cCBB03aa8B3682",
-        amount: 0
-    },
-    {
-        name: "MATICc",
-        isNative: false,
-        address: "0x10b9980C12DDC8B6b1d06C1d50B64f7d400CA0FD",
-        clone: "0xAb47256134F7653a3E7E5a5533732bD3B1AD6668",
-        amount: 0
-    }
-]
-
 type Props = {}
 function WrapForm({}: Props) {
     const chainId = useChainId()
@@ -183,6 +146,10 @@ function WrapForm({}: Props) {
         }
     }
 
+    useEffect(() => {
+        setToken(network.tokens[0])
+    }, [network])
+
     const readBalance = async () => {
         if(isLoadingSigner || !isConnected) return
         try {
@@ -214,7 +181,7 @@ function WrapForm({}: Props) {
                 </div>
 
                 <Select onChange={handleNetworkChange}>
-                    {NETWORKS.map(network =>  <option key={network.chainId} value={network.chainId}>{network.name}</option>)}
+                    {supportNetworks.map(network =>  <option key={network.chainId} value={network.chainId}>{network.name}</option>)}
                 </Select>
             </div>
             {chainId !== network.chainId && <Button outline label="Switch Network" className="w-full" onClick={() => switchNetwork?.(network.chainId)} />}
@@ -222,8 +189,8 @@ function WrapForm({}: Props) {
             <NumberInput className='flex mt-7'>
             <NumberInputField className='w-full border border-gray-300 pl-2' placeholder='Amount' value={token.amount || ""} onChange={e => setToken(token => ({...token, amount: Number(e.target.value)}))} />
             <div className='w-[180px]'>
-                <Select defaultValue={TOKENS?.[0].name} className='w-[50px]' onChange={handleTokenChange}>
-                    {TOKENS?.map(token =>  <option key={token.clone} value={token.clone}>{token.name}</option>)}
+                <Select defaultValue={network.tokens?.[0].name} className='w-[50px]' onChange={handleTokenChange}>
+                    {network.tokens?.map(token =>  <option key={token.clone} value={token.clone}>{token.name}</option>)}
                 </Select>
             </div>
             </NumberInput>

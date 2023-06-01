@@ -6,6 +6,7 @@ import { useDeployedContractInfo } from '~~/hooks/scaffold-eth'
 import { NumberInput, NumberInputField, Select } from '@chakra-ui/react'
 import { notification } from '~~/utils/scaffold-eth'
 import { ethers } from 'ethers'
+import supportNetworks from "~~/resources/wrap/supportedNetworks.json"
 
 const NETWORKS = [
     {
@@ -24,14 +25,14 @@ const TOKENS = [
         name: "ETHc",
         isNative: true,
         "address": "",
-        cloneContract: "0xaFe79D30940218584ec95dFF49cCBB03aa8B3682",
+        clone: "0xaFe79D30940218584ec95dFF49cCBB03aa8B3682",
         amount: 0
     },
     {
         name: "cMATICc",
         isNative: false,
         address: "0x10b9980C12DDC8B6b1d06C1d50B64f7d400CA0FD",
-        cloneContract: "0xAb47256134F7653a3E7E5a5533732bD3B1AD6668",
+        clone: "0xAb47256134F7653a3E7E5a5533732bD3B1AD6668",
         amount: 0
     }
 ]
@@ -47,8 +48,8 @@ function UnwrapForm({}: Props) {
     const {data: signer, isLoading: isLoadingSigner} = useSigner()
     const {address: account, isConnected} = useAccount()
 
-    const [network, setNetwork] = useState(NETWORKS[0])
-    const [token, setToken] = useState(TOKENS[0])
+    const [network, setNetwork] = useState(supportNetworks[0])
+    const [token, setToken] = useState(supportNetworks[0].tokens[0])
     const [isUnwrapping, setIsUnwrapping] = useState(false)
     const [balance, setBalance] = useState("")
     const [isLoadingBalanceSuccessful, setIsLoadingBalanceSuccessful] = useState(false)
@@ -58,13 +59,14 @@ function UnwrapForm({}: Props) {
 
     const handleNetworkChange = (e: any) => {
         const chainId = Number(e.target.value)
-        const network = NETWORKS.find(network => network.chainId === chainId)
+        const network = supportNetworks.find(network => network.chainId === chainId)
         setNetwork(network!)
     }
 
     const handleTokenChange = (e: any) => {
-        const cloneContract = e.target.value
-        const token = TOKENS.find(network => network.cloneContract === cloneContract)
+        const clone = e.target.value
+        const selectedNetwork = supportNetworks.find(_network => _network.chainId === network.chainId)
+        const token = selectedNetwork?.tokens.find(token => token.clone === clone)
         setToken(_token => ({...token!, amount: _token.amount}))
     }
 
@@ -92,10 +94,10 @@ function UnwrapForm({}: Props) {
         const amount = ethers.utils.parseEther(token.amount.toString())
         let contract
         if(token.isNative) {
-            contract = new ethers.Contract(token.cloneContract, ethClone?.abi, signer)
+            contract = new ethers.Contract(token.clone, ethClone?.abi, signer)
 
         } else {
-            contract = new ethers.Contract(token.cloneContract, erc20TokenClone?.abi, signer)
+            contract = new ethers.Contract(token.clone, erc20TokenClone?.abi, signer)
         }
         try {
             notificationId = notification.loading(`Unwrapping ${token.amount} ${token.name}`)
@@ -112,11 +114,15 @@ function UnwrapForm({}: Props) {
         }
     }
 
+    useEffect(() => {
+        setToken(network.tokens[0])
+    }, [network])
+
     const readBalance = async () => {
         if(isLoadingSigner || !isConnected) return
         try {
             setIsLoadingBalanceSuccessful(false)
-            const _token = new ethers.Contract(token.cloneContract, erc20ABI, signer)
+            const _token = new ethers.Contract(token.clone, erc20ABI, signer)
             const balance = await _token.balanceOf(account)
             setBalance(ethers.utils.formatEther(balance))
             setIsLoadingBalanceSuccessful(true)
@@ -128,7 +134,7 @@ function UnwrapForm({}: Props) {
 
     useEffect(() => {
         readBalance()
-    }, [token, account, isUnwrapping, isLoadingSigner])
+    }, [token.name, account, isUnwrapping, isLoadingSigner])
     return (
         <>
             <div className='flex flex-col items-center space-y-10 w-60 mx-auto' aria-label='network'>
@@ -137,7 +143,7 @@ function UnwrapForm({}: Props) {
                 </div>
 
                 <Select onChange={handleNetworkChange}>
-                    {NETWORKS.map(network =>  <option key={network.chainId} value={network.chainId}>{network.name}</option>)}
+                    {supportNetworks.map(network =>  <option key={network.chainId} value={network.chainId}>{network.name}</option>)}
                 </Select>
             </div>
             {chainId !== network.chainId && <Button outline label="Switch Network" className="w-full" onClick={() => switchNetwork?.(network.chainId)} />}
@@ -145,8 +151,8 @@ function UnwrapForm({}: Props) {
             <NumberInput className='flex mt-7'>
             <NumberInputField className='w-full border border-gray-300 pl-2' placeholder='Amount' value={token.amount || ""} onChange={e => setToken(token => ({...token, amount: Number(e.target.value)}))} />
             <div className='w-[180px]'>
-                <Select defaultValue={TOKENS?.[0].name} className='w-[50px]' onChange={handleTokenChange}>
-                    {TOKENS?.map(token =>  <option key={token.cloneContract} value={token.cloneContract}>{token.name}</option>)}
+                <Select defaultValue={network.tokens?.[0].name} className='w-[50px]' onChange={handleTokenChange}>
+                    {network.tokens?.map(token =>  <option key={token.clone} value={token.clone}>{token.name}</option>)}
                 </Select>
             </div>
             </NumberInput>
