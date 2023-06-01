@@ -181,7 +181,7 @@ function WrapForm({}: Props) {
                 </div>
 
                 <Select onChange={handleNetworkChange}>
-                    {supportNetworks.map(network =>  <option key={network.chainId} value={network.chainId}>{network.name}</option>)}
+                    {supportNetworks.filter(network => network.tokens.length).map(network =>  <option key={network.chainId} value={network.chainId}>{network.name}</option>)}
                 </Select>
             </div>
             {chainId !== network.chainId && <Button outline label="Switch Network" className="w-full" onClick={() => switchNetwork?.(network.chainId)} />}
