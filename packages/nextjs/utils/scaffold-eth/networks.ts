@@ -104,8 +104,22 @@ export function getBlockExplorerAddressLink(network: chains.Chain, address: stri
  * @returns targetNetwork object consisting targetNetwork from scaffold.config and extra network metadata
  */
 
+const NETWORKS = {
+  "11155111": "sepolia",
+  "80001": "polygonMumbai",
+};
+
 export function getTargetNetwork(): chains.Chain & Partial<TChainAttributes> {
-  const configuredNetwork = scaffoldConfig.targetNetwork;
+  let configuredNetwork;
+  if (typeof window !== undefined) {
+    const chainId = globalThis.ethereum?.networkVersion;
+    const networkName = NETWORKS[chainId];
+    const network = chains[networkName];
+
+    configuredNetwork = network === undefined ? scaffoldConfig.targetNetwork : network;
+  } else {
+    configuredNetwork = scaffoldConfig.targetNetwork;
+  }
 
   return {
     ...configuredNetwork,

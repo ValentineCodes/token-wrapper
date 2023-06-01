@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import Router from 'next/router'
 import { useSwitchNetwork, useChainId, useAccount, useSigner, erc20ABI } from 'wagmi'
 import Button from '../../Button'
 import { useDeployedContractInfo } from '~~/hooks/scaffold-eth'
@@ -38,7 +39,11 @@ const TOKENS = [
 type Props = {}
 function UnwrapForm({}: Props) {
     const chainId = useChainId()
-    const {switchNetwork} = useSwitchNetwork()
+    const {switchNetwork} = useSwitchNetwork({
+        onSuccess: () => {
+            Router.reload()
+        }
+    })
     const {data: signer, isLoading: isLoadingSigner} = useSigner()
     const {address: account, isConnected} = useAccount()
 
@@ -108,14 +113,14 @@ function UnwrapForm({}: Props) {
             try {
                 const _token = new ethers.Contract(token.cloneContract, erc20ABI, signer)
                 const balance = await _token.balanceOf(account)
-                setBalance(Number(ethers.utils.formatEther(balance)).toFixed(4))
+                setBalance(ethers.utils.formatEther(balance))
             } catch(error) {
                 console.log(`Error reading balance of ${token.name}`)
                 console.error(error)
                 return
             }
         })()
-    }, [token, account, isUnwrapping])
+    }, [token, account, isUnwrapping, isLoadingSigner])
     return (
         <>
             {/* Select Network */}
@@ -128,7 +133,7 @@ function UnwrapForm({}: Props) {
                     {NETWORKS.map(network =>  <option key={network.chainId} value={network.chainId}>{network.name}</option>)}
                 </Select>
             </div>
-            {chainId !== network.chainId && <Button label="Switch Network" className="w-full" onClick={() => switchNetwork?.(network.chainId)} />}
+            {chainId !== network.chainId && <Button outline label="Switch Network" className="w-full" onClick={() => switchNetwork?.(network.chainId)} />}
 
             <NumberInput className='flex mt-7'>
             <NumberInputField className='w-full border border-gray-300 pl-2' placeholder='Amount' value={token.amount || ""} onChange={e => setToken(token => ({...token, amount: Number(e.target.value)}))} />
@@ -138,7 +143,7 @@ function UnwrapForm({}: Props) {
                 </Select>
             </div>
             </NumberInput>
-            <p className='text-right text-sm text-gray-700'>Balance: {balance}</p>
+            <p className='text-right text-sm text-gray-700'>Balance: {Number(balance).toFixed(4)}</p>
 
             <Button label="Unwrap" className='w-full' onClick={unwrap} isLoading={isUnwrapping} />
         </>

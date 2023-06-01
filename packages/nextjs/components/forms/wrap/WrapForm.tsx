@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react'
+import Router from 'next/router'
 import { useSwitchNetwork, useChainId, useAccount, useProvider, useSigner, erc20ABI } from 'wagmi'
 import Button from '../../Button'
 import { useDeployedContractInfo } from '~~/hooks/scaffold-eth'
@@ -46,7 +47,11 @@ const TOKENS: Token[] = [
 type Props = {}
 function WrapForm({}: Props) {
     const chainId = useChainId()
-    const {switchNetwork} = useSwitchNetwork()
+    const {switchNetwork} = useSwitchNetwork({
+        onSuccess: () => {
+            Router.reload()
+        }
+    })
     const provider = useProvider()
     const {data: signer, isLoading: isLoadingSigner} = useSigner()
     const {address: account, isConnected} = useAccount()
@@ -175,11 +180,11 @@ function WrapForm({}: Props) {
             try {
                 if(token.isNative) {
                     const balance = await provider.getBalance(account!)
-                    setBalance(Number(ethers.utils.formatEther(balance)).toFixed(4))
+                    setBalance(ethers.utils.formatEther(balance))
                 } else {
                     const _token = new ethers.Contract(token.address, erc20ABI, signer)
                     const balance = await _token.balanceOf(account)
-                    setBalance(Number(ethers.utils.formatEther(balance)).toFixed(4))
+                    setBalance(ethers.utils.formatEther(balance))
                 }
             } catch(error) {
                 console.log(`Error reading balance of ${token.name}`)
@@ -187,7 +192,7 @@ function WrapForm({}: Props) {
                 return
             }
         })()
-    }, [token, account, isWrapping])
+    }, [token, account, isWrapping, isLoadingSigner])
 
     return (
         <>
@@ -201,7 +206,7 @@ function WrapForm({}: Props) {
                     {NETWORKS.map(network =>  <option key={network.chainId} value={network.chainId}>{network.name}</option>)}
                 </Select>
             </div>
-            {chainId !== network.chainId && <Button label="Switch Network" className="w-full" onClick={() => switchNetwork?.(network.chainId)} />}
+            {chainId !== network.chainId && <Button outline label="Switch Network" className="w-full" onClick={() => switchNetwork?.(network.chainId)} />}
 
             <NumberInput className='flex mt-7'>
             <NumberInputField className='w-full border border-gray-300 pl-2' placeholder='Amount' value={token.amount || ""} onChange={e => setToken(token => ({...token, amount: Number(e.target.value)}))} />
@@ -211,7 +216,7 @@ function WrapForm({}: Props) {
                 </Select>
             </div>
             </NumberInput>
-            <p className='text-right text-sm text-gray-700'>Balance: {balance}</p>
+            <p className='text-right text-sm text-gray-700'>Balance: {Number(balance).toFixed(4)}</p>
             {wrappedToken? <Button outline label={`Add ${wrappedToken.symbol} to Metamask`} onClick={addTokenToMetamask} /> : null}
 
             <Button label={token.isNative? "Wrap" : "Approve"} className='w-full' onClick={wrap} isLoading={isWrapping} />

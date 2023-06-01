@@ -14,7 +14,7 @@ export const RainbowKitCustomConnectButton = () => {
   const networkColor = useNetworkColor();
   const configuredNetwork = getTargetNetwork();
   const { disconnect } = useDisconnect();
-  const { switchNetwork } = useSwitchNetwork();
+  const { switchNetwork} = useSwitchNetwork();
 
   return (
     <ConnectButton.Custom>
