@@ -7,7 +7,7 @@ import { notification } from '~~/utils/scaffold-eth'
 import { BigNumber, ethers } from 'ethers'
 import supportNetworks from "~~/resources/wrap/supportedNetworks.json"
 import erc20TokenCloneABI from "~~/resources/abi/erc20TokenCloneABI.json"
-import { useScaffoldContractWrite } from '~~/hooks/scaffold-eth'
+import bgTokenABI from "~~/resources/abi/bgTokenABI.json"
 
 type Props = {}
 function WrapForm({}: Props) {
@@ -28,11 +28,7 @@ function WrapForm({}: Props) {
     const [balance, setBalance] = useState("")
     const [isLoadingBalanceSuccessful, setIsLoadingBalanceSuccessful] = useState(false)
     const [metamaskToken, setMetamaskToken] = useState<any>()
-    const {writeAsync: mintBG, isLoading: isLoadingBGMint} = useScaffoldContractWrite({
-        contractName: "BuidlGuidl",
-        functionName: "mint",
-        args: [ethers.utils.parseEther("100")]
-    })
+    const [isMintingBG, setIsMintingBG] = useState(false)
 
     const isNetworkSwitched = () => {
         return chainId !== network.chainId
@@ -144,6 +140,48 @@ function WrapForm({}: Props) {
         setIsWrapping(false)
     }
 
+    const mintBG = async () => {
+        if(isMintingBG) return
+        if(!isConnected) {
+            notification.info("Connect Wallet")
+            return
+        }
+        if(isLoadingSigner) {
+            notification.info("Loading signer...")
+            return
+        }
+        let notificationId
+        setIsMintingBG(true)
+        try {
+            notificationId = notification.loading("Minting 100 BG tokens")
+            const bgTokenAddress = networkTokens[1].address
+            const bg = new ethers.Contract(bgTokenAddress, bgTokenABI, signer )
+            const tx = await bg.mint(ethers.utils.parseEther("100"))
+            await tx.wait(1)
+
+            // get bg token params to add to metamask
+            try {
+                const contract = new ethers.Contract(bgTokenAddress, erc20ABI, provider)
+                const [symbol, decimals] = await Promise.all([
+                    contract.symbol(),
+                    contract.decimals()
+                ])    
+                setMetamaskToken({address: bgTokenAddress, symbol, decimals})
+            } catch(error) {
+                console.log("failed to get BG token params")
+                console.error(error)
+            } finally {
+                notification.success("Minted 100 BG tokens!")
+            }
+        } catch(error) {
+            notification.error(JSON.stringify(error))
+            console.error(error)
+        } finally {
+            notification.remove(notificationId)
+            setIsMintingBG(false)
+        }
+    }
+
     const addTokenToMetamask = async () => {
         if(!window.ethereum || !metamaskToken) return
         try {
@@ -226,7 +264,7 @@ function WrapForm({}: Props) {
             {metamaskToken? <Button outline label={`Add ${metamaskToken.symbol} to Metamask`} onClick={addTokenToMetamask} /> : null}
 
             <Button label="Wrap" className='w-full' onClick={wrap} isLoading={isWrapping} />
-            <Button outline label="Mint 100 BG" className='w-full' onClick={mintBG} isLoading={isLoadingBGMint} />
+            <Button outline label="Mint 100 BG" className='w-full' onClick={mintBG} isLoading={isMintingBG} />
         </>
     )
 }
