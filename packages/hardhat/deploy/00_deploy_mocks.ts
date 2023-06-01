@@ -25,8 +25,14 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const { deploy } = hre.deployments;
 
   if ([1337, 31337].includes(network.config.chainId!)) {
-    await deploy("AfterLife", {
+    const afterlife = await deploy("AfterLife", {
       from: deployer,
+      log: true,
+      autoMine: true,
+    });
+    await deploy("ERC20TokenClone", {
+      from: deployer,
+      args: [afterlife.address, "AfterLife Clone", "ALc"],
       log: true,
       autoMine: true,
     });
@@ -40,4 +46,4 @@ export default deployYourContract;
 
 // Tags are useful if you have multiple deploy files and only want to run one of them.
 // e.g. yarn deploy --tags YourContract
-deployYourContract.tags = ["AfterLife"];
+deployYourContract.tags = ["AfterLife", "mocks"];

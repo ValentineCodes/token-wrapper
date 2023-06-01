@@ -19,7 +19,7 @@ describe("ERC20TokenClone", function () {
     owner = signers[0];
     valentine = signers[1];
 
-    await deployments.fixture(["AfterLife", "ERC20TokenClone"]);
+    await deployments.fixture(["mocks"]);
 
     cToken = await ethers.getContract("ERC20TokenClone", valentine);
     afterlife = await ethers.getContract("AfterLife", valentine);
