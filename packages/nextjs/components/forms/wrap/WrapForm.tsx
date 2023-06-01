@@ -27,7 +27,7 @@ function WrapForm({}: Props) {
     const [isWrapping, setIsWrapping] = useState(false)
     const [balance, setBalance] = useState("")
     const [isLoadingBalanceSuccessful, setIsLoadingBalanceSuccessful] = useState(false)
-    const [wrappedToken, setWrappedToken] = useState<any>()
+    const [metamaskToken, setMetamaskToken] = useState<any>()
     const {writeAsync: mintBG, isLoading: isLoadingBGMint} = useScaffoldContractWrite({
         contractName: "BuidlGuidl",
         functionName: "mint",
@@ -96,7 +96,7 @@ function WrapForm({}: Props) {
                         contract.symbol(),
                         contract.decimals()
                     ])    
-                    setWrappedToken({contract: token.clone, symbol, decimals})
+                    setMetamaskToken({address: token.clone, symbol, decimals})
                 } catch(error) {
                     console.log("failed to get token clone params")
                     console.error(error)
@@ -134,7 +134,7 @@ function WrapForm({}: Props) {
                     tokenCloneContract.symbol(),
                     tokenCloneContract.decimals()
                 ])    
-                setWrappedToken({contract: token.clone, symbol, decimals})
+                setMetamaskToken({contract: token.clone, symbol, decimals})
             } catch(error) {
                 notification.error(JSON.stringify(error))
                 console.error(error)
@@ -145,28 +145,28 @@ function WrapForm({}: Props) {
     }
 
     const addTokenToMetamask = async () => {
-        if(!window.ethereum || !wrappedToken) return
+        if(!window.ethereum || !metamaskToken) return
         try {
             const isAdded = await window.ethereum.request({
                 method: "wallet_watchAsset",
                 params: {
                     type: "ERC20",
                     options: {
-                        address: wrappedToken.contract,
-                        symbol: wrappedToken.symbol,   
-                        decimals: wrappedToken.decimals
+                        address: metamaskToken.address,
+                        symbol: metamaskToken.symbol,   
+                        decimals: metamaskToken.decimals
                     }
                 }
             })
 
             if(isAdded) {
-                notification.success(`${wrappedToken.symbol} added to Metamask`)
-                setWrappedToken(null)
+                notification.success(`${metamaskToken.symbol} added to Metamask`)
+                setMetamaskToken(null)
             } else {
-                notification.error(`Failed to add ${wrappedToken.symbol} to Metamask`)
+                notification.error(`Failed to add ${metamaskToken.symbol} to Metamask`)
             }
         } catch(error) {
-            notification.error(`Failed to add ${wrappedToken.symbol} to Metamask`)
+            notification.error(`Failed to add ${metamaskToken.symbol} to Metamask`)
             console.error(error)
         }
     }
@@ -223,7 +223,7 @@ function WrapForm({}: Props) {
             </div>
             </NumberInput>
             <p className={`text-right text-sm text-gray-700 ${!isConnected || !isLoadingBalanceSuccessful? 'invisible': ''}`}>Balance: {Number(balance).toFixed(4)}</p>
-            {wrappedToken? <Button outline label={`Add ${wrappedToken.symbol} to Metamask`} onClick={addTokenToMetamask} /> : null}
+            {metamaskToken? <Button outline label={`Add ${metamaskToken.symbol} to Metamask`} onClick={addTokenToMetamask} /> : null}
 
             <Button label="Wrap" className='w-full' onClick={wrap} isLoading={isWrapping} />
             <Button outline label="Mint 100 BG" className='w-full' onClick={mintBG} isLoading={isLoadingBGMint} />
