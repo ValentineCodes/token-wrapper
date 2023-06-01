@@ -40,7 +40,7 @@ function BridgeForm({}: Props) {
   const [token, setToken] = useState({vault: "", amount: 0})
   const [receivedTokens, setReceivedTokens] = useState<TokenClone[] | null>(null)
   const {switchNetwork} = useSwitchNetwork()
-  const {address: account} = useAccount()
+  const {address: account, isConnected} = useAccount()
   const {balance, isLoading: isLoadingBalance} = useAccountBalance(account)
   const chainId = useChainId()
   const {data: signer, isLoading: isLoadingSigner} = useSigner()
@@ -48,6 +48,10 @@ function BridgeForm({}: Props) {
 
   const deposit = async () => {
     if(isDepositing) return
+    if(!isConnected) {
+      notification.info("Connect Wallet")
+      return
+    }
     if(isLoadingSigner || isLoadingBalance) {
       notification.info("Loading resources...")
       return

@@ -23,13 +23,13 @@ interface TokenClone {
 }
 
 const SEPOLIA_TOKENS_CLONES = [{name: "ETHc", address: ""}]
-const MUMBAI_TOKENS_CLONES = [{name: "MATICc", address: "0xEB49F5F7C4f1B21C9b667090878D219EB1Ca71A5"}]
+const MUMBAI_TOKENS_CLONES = [{name: "MATICc", address: "0x10b9980C12DDC8B6b1d06C1d50B64f7d400CA0FD"}]
 
 type Props = {}
 function WithdrawForm({}: Props) {
   const [isNetworkSwitched, setIsNetworkSwitched] = useState(false)
   const {switchNetwork} = useSwitchNetwork()
-  const {address: account} = useAccount()
+  const {address: account, isConnected} = useAccount()
   const [balance, setBalance] = useState("")
   const chainId = useChainId()
   const {data: signer, isLoading: isLoadingSigner} = useSigner()
@@ -42,6 +42,10 @@ function WithdrawForm({}: Props) {
 
   const withdraw = async () => {
    if(isWithdrawing) return
+   if(!isConnected) {
+      notification.info("Connect Wallet")
+      return
+    }
    if(isLoadingSigner || isLoadingBridgeTokenClone) {
       notification.info("Loading resources...")
       return
@@ -55,7 +59,7 @@ function WithdrawForm({}: Props) {
     //   return
     // }
 
-    let notificationId = notification.loading("Depositing")
+    let notificationId = notification.loading("Withdrawing")
     setIsWithdrawing(true)
 
     try{
