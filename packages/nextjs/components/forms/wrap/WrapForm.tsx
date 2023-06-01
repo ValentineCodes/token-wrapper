@@ -107,15 +107,21 @@ function WrapForm({}: Props) {
                     value: amount
                 })
                 await tx?.wait(1)
-                
-                notification.success("That's a wrap!")
 
-                const contract = new ethers.Contract(token.cloneContract, erc20ABI, provider)
-                const [symbol, decimals] = await Promise.all([
-                    contract.symbol(),
-                    contract.decimals()
-                ])    
-                setWrappedToken({contract: token.cloneContract, symbol, decimals})
+                // get wrapped token clone params to add to metamask
+                try {
+                    const contract = new ethers.Contract(token.cloneContract, erc20ABI, provider)
+                    const [symbol, decimals] = await Promise.all([
+                        contract.symbol(),
+                        contract.decimals()
+                    ])    
+                    setWrappedToken({contract: token.cloneContract, symbol, decimals})
+                } catch(error) {
+                    console.log("failed to get token clone params")
+                    console.error(error)
+                } finally {
+                    notification.success("That's a wrap!")
+                }
             } catch(error) {
                 notification.error(JSON.stringify(error))
             }
