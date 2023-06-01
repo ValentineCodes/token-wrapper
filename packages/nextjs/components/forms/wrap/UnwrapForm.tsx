@@ -8,6 +8,7 @@ import { notification } from '~~/utils/scaffold-eth'
 import { ethers } from 'ethers'
 import supportNetworks from "~~/resources/wrap/supportedNetworks.json"
 import erc20TokenCloneABI from "~~/resources/abi/erc20TokenCloneABI.json"
+import nativeTokenCloneABI from "~~/resources/abi/nativeTokenCloneABI.json"
 
 type Props = {}
 function UnwrapForm({}: Props) {
@@ -26,7 +27,6 @@ function UnwrapForm({}: Props) {
     const [isUnwrapping, setIsUnwrapping] = useState(false)
     const [balance, setBalance] = useState("")
     const [isLoadingBalanceSuccessful, setIsLoadingBalanceSuccessful] = useState(false)
-    const {data: ethClone, isLoading: isLoadingETHClone} = useDeployedContractInfo("ETHClone")
 
     const isNetworkSwitched = () => {
         return chainId !== network.chainId
@@ -59,8 +59,8 @@ function UnwrapForm({}: Props) {
             notification.info("Connect Wallet")
             return
         }
-        if(isLoadingSigner || isLoadingETHClone) {
-            notification.info("Loading resources...")
+        if(isLoadingSigner) {
+            notification.info("Loading signer...")
             return
         }
         if(token.amount <= 0) {
@@ -76,13 +76,13 @@ function UnwrapForm({}: Props) {
         let notificationId
         const amount = ethers.utils.parseEther(token.amount.toString())
         let contract
-        if(token.isNative) {
-            contract = new ethers.Contract(token.clone, ethClone?.abi, signer)
-
-        } else {
-            contract = new ethers.Contract(token.clone, erc20TokenCloneABI, signer)
-        }
         try {
+            if(token.isNative) {
+                contract = new ethers.Contract(token.clone, nativeTokenCloneABI, signer)
+
+            } else {
+                contract = new ethers.Contract(token.clone, erc20TokenCloneABI, signer)
+            }
             notificationId = notification.loading(`Unwrapping ${token.amount} ${token.name}`)
 
             const withdrawTx = await contract.withdraw(amount)
