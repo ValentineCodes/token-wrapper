@@ -148,12 +148,10 @@ function UnwrapForm({}: Props) {
             {isNetworkSwitched() && <Button outline label="Switch Network" className="w-full" onClick={handleNetworkSwitch} />}
 
             <NumberInput className='flex mt-7'>
-            <NumberInputField className='w-full border border-gray-300 pl-2' placeholder='Amount' value={token.amount || ""} onChange={e => setToken(token => ({...token, amount: Number(e.target.value)}))} />
-            <div className='w-[180px]'>
-                <Select defaultValue={networkTokenClones?.[0].name} className='w-[50px]' onChange={handleTokenChange}>
+                <NumberInputField className='w-full border border-gray-300 pl-2' placeholder='Amount' value={token.amount || ""} onChange={e => setToken(token => ({...token, amount: Number(e.target.value)}))} />
+                <select defaultValue={networkTokenClones?.[0].name} className='min-w-[120px] border border-[#CBD5E0] rounded-md px-2' onChange={handleTokenChange}>
                     {networkTokenClones?.map(token =>  <option key={token.clone} value={token.clone}>{token.name}</option>)}
-                </Select>
-            </div>
+                </select>
             </NumberInput>
             <p className={`text-right text-sm text-gray-700 ${!isConnected || !isLoadingBalanceSuccessful? 'invisible': ''}`}>Balance: {Number(balance).toFixed(4)}</p>
 
