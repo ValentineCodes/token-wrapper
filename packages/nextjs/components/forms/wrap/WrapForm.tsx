@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react'
 import Router from 'next/router'
 import { useSwitchNetwork, useChainId, useAccount, useProvider, useSigner, erc20ABI } from 'wagmi'
 import Button from '../../Button'
-import { NumberInput, NumberInputField, Select } from '@chakra-ui/react'
+import { Input, NumberInput, NumberInputField, Select } from '@chakra-ui/react'
 import { notification } from '~~/utils/scaffold-eth'
 import { BigNumber, ethers } from 'ethers'
 import supportNetworks from "~~/resources/wrap/supportedNetworks.json"
@@ -282,12 +282,18 @@ function WrapForm({}: Props) {
             {isNetworkSwitched() && <Button outline label="Switch Network" className="w-full" onClick={handleNetworkSwitch} />}
 
             <NumberInput className='flex mt-7'>
-                <NumberInputField className='w-full border border-gray-300 pl-2' placeholder='Amount' value={token.amount || ""} onChange={e => setToken(token => ({...token, amount: Number(e.target.value)}))} />
+                <Input type='number' placeholder='Amount' value={token.amount || ""} onChange={e => setToken(token => ({...token, amount: Number(e.target.value)}))} />
                 <select defaultValue={networkTokens?.[0].name} className='min-w-[120px] border border-[#CBD5E0] rounded-md px-2 bg-white' onChange={handleTokenChange}>
                     {networkTokens?.map(token =>  <option key={token.clone} value={token.clone}>{token.name}</option>)}
                 </select>
             </NumberInput>
-            <p className={`text-right text-sm text-gray-700 ${!isConnected || !isLoadingBalanceSuccessful? 'invisible': ''}`}>Balance: {Number(balance).toFixed(4)}</p>
+            <div className='flex items-center justify-between'>
+                <p className={`text-sm text-[#624DE3] cursor-pointer hover:font-bold ${!isConnected || !isLoadingBalanceSuccessful? 'invisible': ''}`} onClick={() => {
+                    if(!isConnected || !isLoadingBalanceSuccessful) return
+                    setToken(token => ({...token, amount: Number(balance)}))
+                }}>MAX</p>
+                <p className={`text-sm text-gray-700 ${!isConnected || !isLoadingBalanceSuccessful? 'invisible': ''}`}>Balance: {Number(balance).toFixed(4)}</p>
+            </div>
             {metamaskToken? <Button outline label={`Add ${metamaskToken.symbol} to Metamask`} onClick={addTokenToMetamask} /> : null}
 
             <Button label="Wrap" className='w-full' onClick={wrap} isLoading={isWrapping} />

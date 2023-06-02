@@ -2,8 +2,7 @@ import React, {useState, useEffect} from 'react'
 import Router from 'next/router'
 import { useSwitchNetwork, useChainId, useAccount, useSigner, erc20ABI } from 'wagmi'
 import Button from '../../Button'
-import { useDeployedContractInfo } from '~~/hooks/scaffold-eth'
-import { NumberInput, NumberInputField, Select } from '@chakra-ui/react'
+import { NumberInput, Input, Select } from '@chakra-ui/react'
 import { notification } from '~~/utils/scaffold-eth'
 import { ethers } from 'ethers'
 import supportNetworks from "~~/resources/wrap/supportedNetworks.json"
@@ -148,12 +147,18 @@ function UnwrapForm({}: Props) {
             {isNetworkSwitched() && <Button outline label="Switch Network" className="w-full" onClick={handleNetworkSwitch} />}
 
             <NumberInput className='flex mt-7'>
-                <NumberInputField className='w-full border border-gray-300 pl-2' placeholder='Amount' value={token.amount || ""} onChange={e => setToken(token => ({...token, amount: Number(e.target.value)}))} />
+                <Input type='number' placeholder='Amount' value={token.amount || ""} onChange={e => setToken(token => ({...token, amount: Number(e.target.value)}))} />
                 <select defaultValue={networkTokenClones?.[0].name} className='min-w-[120px] border border-[#CBD5E0] rounded-md px-2 bg-white' onChange={handleTokenChange}>
                     {networkTokenClones?.map(token =>  <option key={token.clone} value={token.clone}>{token.name}</option>)}
                 </select>
             </NumberInput>
-            <p className={`text-right text-sm text-gray-700 ${!isConnected || !isLoadingBalanceSuccessful? 'invisible': ''}`}>Balance: {Number(balance).toFixed(4)}</p>
+            <div className='flex items-center justify-between'>
+                <p className={`text-sm text-[#624DE3] cursor-pointer hover:font-bold ${!isConnected || !isLoadingBalanceSuccessful? 'invisible': ''}`} onClick={() => {
+                    if(!isConnected || !isLoadingBalanceSuccessful) return
+                    setToken(token => ({...token, amount: Number(balance)}))
+                }}>MAX</p>
+                <p className={`text-sm text-gray-700 ${!isConnected || !isLoadingBalanceSuccessful? 'invisible': ''}`}>Balance: {Number(balance).toFixed(4)}</p>
+            </div>
 
             <Button label="Unwrap" className='w-full' onClick={unwrap} isLoading={isUnwrapping} />
         </>
