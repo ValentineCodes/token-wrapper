@@ -1,0 +1,42 @@
+[
+    {
+        "name": "Sepolia",
+        "chainId": 11155111, 
+        "img": {
+            "url": "/images/eth-icon.png", 
+            "alt": "ethereum"
+        },
+        "tokens": [
+            {
+                "name": "ETH",
+                "isNative": true,
+                "address": "",
+                "clone": "0x5820Ab62f9FC37c7dAfDE0160DE893Fa9B2bB350",
+                "amount": 0
+            },
+            {
+                "name": "BG",
+                "isNative": false,
+                "address": "0x905Ee3f4D489199E48B73cfcB0a3fAf2c9c56973",
+                "clone": "0x56969a437761dB5199617d707b78C8AE8bD3A2c1",
+                "amount": 0
+            }
+        ],
+        "tokenClones": [
+            {
+                "name": "ETHc",
+                "isNative": true,
+                "address": "",
+                "clone": "0x5820Ab62f9FC37c7dAfDE0160DE893Fa9B2bB350",
+                "amount": 0
+            },
+            {
+                "name": "BGc",
+                "isNative": false,
+                "address": "0x905Ee3f4D489199E48B73cfcB0a3fAf2c9c56973",
+                "clone": "0x56969a437761dB5199617d707b78C8AE8bD3A2c1",
+                "amount": 0
+            }
+        ]
+    }
+]

@@ -4,7 +4,7 @@
 <img src="token-wrapper.png" alt="Token Wrapper" width="300">
 </p>
 
-[Token Wrapper](https://token-wrapper.vercel.app) is a DApp which enables users to wrap Native(ETH, MATIC) and ERC20(BuidlGuidl) tokens on supported EVM compatible chains. Currently supports Sepolia and Mumbai with FREE! BuidlGuidl token mint🫡🏘
+[Token Wrapper](https://token-wrapper.vercel.app) is a DApp which enables users to wrap Native(ETH, MATIC) and ERC20(BuidlGuidl) tokens on supported EVM compatible chains. Currently supports Mumbai with FREE! BuidlGuidl token mint🫡🏘
 
 # Local Development
 
