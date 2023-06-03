@@ -41,14 +41,18 @@ function UnwrapForm({}: Props) {
 
     const handleNetworkChange = (chainId: number) => {
         const network = supportNetworks.find(network => network.chainId === chainId)
-        setNetwork(network!)
+        if(network) {
+            setNetwork(network)
+        }
     }
 
     const handleTokenChange = (e: any) => {
         const clone = e.target.value
         const selectedNetwork = supportNetworks.find(_network => _network.chainId === network.chainId)
         const token = selectedNetwork?.tokens.find(token => token.clone === clone)
-        setToken(_token => ({...token!, amount: _token.amount}))
+        if(token) {
+            setToken(_token => ({...token, amount: _token.amount}))
+        }
     }
 
     const handleNetworkSwitch = () => {
