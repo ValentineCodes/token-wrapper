@@ -8,6 +8,12 @@
 
 [Video Demo](https://youtu.be/2yWslxe1iOk)
 
+# How It Works
+
+To wrap native tokens(MATIC), funds are transferred to the (MATICClone contract)[http://url.com] which then mints an equivalent amount of MATICc to the depositor.
+To wrap ERC20 tokens(BuidlGuidl), the (BGClone contract)[http://url.com] is approved to spend the amount to wrap before calling the `deposit` function with the amount. An equivalent amount of BGc is then minted to the depositor.
+To withdraw or unwrap, call the `withdraw` functon on any of the contracts with the amount to withdraw which will be burned before an equivalent amount is transferred to the withdrawer
+
 # Local Development
 
 ### Install dependencies:
