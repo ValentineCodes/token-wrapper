@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import Router from 'next/router'
 import { useSwitchNetwork, useChainId, useAccount, useSigner, erc20ABI } from 'wagmi'
 import Button from '../../Button'
-import { NumberInput, Input, Select } from '@chakra-ui/react'
+import { NumberInput, Input, Select, NumberInputField } from '@chakra-ui/react'
 import { notification } from '~~/utils/scaffold-eth'
 import { ethers } from 'ethers'
 import supportNetworks from "~~/resources/wrap/supportedNetworks.json"
@@ -151,7 +151,7 @@ function UnwrapForm({}: Props) {
             {isNetworkSwitched() && <Button outline label="Switch Network" className="w-full" onClick={handleNetworkSwitch} />}
 
             <NumberInput className='flex mt-7'>
-                <Input type='number' placeholder='Amount' value={token.amount || ""} onChange={e => setToken(token => ({...token, amount: Number(e.target.value)}))} />
+                <NumberInputField type='number' placeholder='Amount' value={token.amount || ""} onChange={e => setToken(token => ({...token, amount: Number(e.target.value)}))} />
                 <select defaultValue={networkTokenClones?.[0].name} className='min-w-[120px] border border-[#CBD5E0] rounded-md px-2 bg-white' onChange={handleTokenChange}>
                     {networkTokenClones?.map(token =>  <option key={token.clone} value={token.clone}>{token.name}</option>)}
                 </select>
