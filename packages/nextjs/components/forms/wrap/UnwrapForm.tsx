@@ -156,13 +156,13 @@ function UnwrapForm({}: Props) {
                     {networkTokenClones?.map(token =>  <option key={token.clone} value={token.clone}>{token.name}</option>)}
                 </select>
             </NumberInput>
-            <div className='flex items-center justify-between'>
+            {/* <div className='flex items-center justify-between'>
                 <p className={`text-sm text-[#624DE3] cursor-pointer hover:font-bold ${!isConnected || !isLoadingBalanceSuccessful? 'invisible': ''}`} onClick={() => {
                     if(!isConnected || !isLoadingBalanceSuccessful) return
                     setToken(token => ({...token, amount: Number(balance)}))
-                }}>MAX</p>
-                <p className={`text-sm text-gray-700 ${!isConnected || !isLoadingBalanceSuccessful? 'invisible': ''}`}>Balance: {Number(balance).toFixed(4)}</p>
-            </div>
+                }}>MAX</p> */}
+                <p className={`text-sm text-gray-700 text-right ${!isConnected || !isLoadingBalanceSuccessful? 'invisible': ''}`}>Balance: {Number(balance).toFixed(4)}</p>
+            {/* </div> */}
 
             <Button label="Unwrap" className='w-full' onClick={unwrap} isLoading={isUnwrapping} />
         </>
